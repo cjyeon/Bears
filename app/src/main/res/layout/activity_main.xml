@@ -6,13 +6,124 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="77dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/ll_bookmark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_starfilled"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:src="@drawable/star_filled"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/tv_bookmark"
+            style="@style/generalText"
+            android:text="즐겨찾기"
+            android:textColor="@color/colorWhite"
+            android:textSize="14dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_logo"
+            style="@style/generalText"
+            android:layout_gravity="center"
+            android:fontFamily="@font/notosanskr_bold"
+            android:text="Bears"
+            android:textColor="@color/colorWhite"
+            android:textSize="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <LinearLayout
+            android:id="@+id/ll_driver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" >
+
+        <ImageView
+            android:id="@+id/iv_driver"
+            android:layout_width="25dp"
+            android:layout_height="35dp"
+            android:src="@drawable/driver"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/tv_driver"
+            style="@style/generalText"
+            android:layout_marginTop="3dp"
+            android:text="기사전용"
+            android:textColor="@color/colorWhite"
+            android:textSize="14dp"/>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/iv_voice"
+        android:layout_width="100dp"
+        android:layout_height="120dp"
+        android:src="@drawable/voice"
+        android:layout_marginTop="138dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_voice"
+        style="@style/generalText"
+        android:text="이용할 버스 번호를 말씀하세요"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="14dp"
+        android:layout_marginTop="25dp"
+        app:layout_constraintEnd_toEndOf="@+id/iv_voice"
+        app:layout_constraintStart_toStartOf="@+id/iv_voice"
+        app:layout_constraintTop_toBottomOf="@+id/iv_voice" />
+
+    <EditText
+        android:id="@+id/et_searchnum"
+        android:layout_width="232dp"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="100dp"
+        android:hint="버스번호를 입력해 주세요"
+        android:textColorHint="@color/colorPrimaryDark"
+        android:textSize="16dp"
+        android:backgroundTint="@color/colorPrimaryDark"
+        app:layout_constraintEnd_toEndOf="@+id/tv_voice"
+        app:layout_constraintStart_toStartOf="@+id/tv_voice"
+        app:layout_constraintTop_toBottomOf="@+id/tv_voice" />
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/search"
+        android:layout_marginTop="3dp"
+        app:layout_constraintBottom_toBottomOf="@+id/et_searchnum"
+        app:layout_constraintEnd_toEndOf="@+id/et_searchnum"
+        app:layout_constraintTop_toTopOf="@+id/et_searchnum"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

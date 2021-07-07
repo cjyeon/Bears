@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SearchResultActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="77dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_backbtn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/back"
+            android:layout_marginLeft="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_searchresult"
+            style="@style/generalText"
+            android:text="검색결과"
+            android:textColor="@color/colorWhite"
+            android:textSize="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="338dp"
+        android:layout_height="128dp"
+        android:layout_marginTop="36dp"
+        android:background="@drawable/search_result_border"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+        <TextView
+            android:id="@+id/tv_search_busnum"
+            style="@style/boldText"
+            android:layout_marginLeft="24dp"
+            android:text="6427"
+            android:textColor="@color/colorBlack"
+            android:textSize="36dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_staroutlined"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginRight="22dp"
+            android:src="@drawable/star_outlined"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView"
+            style="@style/generalText"
+            android:layout_marginTop="5dp"
+            android:text="즐겨찾기"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintEnd_toEndOf="@+id/iv_staroutlined"
+            app:layout_constraintStart_toStartOf="@+id/iv_staroutlined"
+            app:layout_constraintTop_toBottomOf="@+id/iv_staroutlined" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tv_arrivaltime"
+        style="@style/generalText"
+        android:layout_marginTop="30dp"
+        android:text="6분 57초 후 도착 예정"
+        android:textSize="17dp"
+        app:layout_constraintEnd_toEndOf="@+id/constraintLayout2"
+        app:layout_constraintStart_toStartOf="@+id/constraintLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+
+    <TextView
+        android:id="@+id/tv_arrivalbusstop"
+        style="@style/generalText"
+        android:text="6정거장 전"
+        android:textSize="17dp"
+        android:layout_marginTop="13dp"
+        app:layout_constraintEnd_toEndOf="@+id/tv_arrivaltime"
+        app:layout_constraintStart_toStartOf="@+id/tv_arrivaltime"
+        app:layout_constraintTop_toBottomOf="@+id/tv_arrivaltime" />
+
+    <ImageView
+        android:id="@+id/iv_bell"
+        android:layout_width="100dp"
+        android:layout_height="120dp"
+        android:src="@drawable/bell"
+        android:layout_marginTop="90dp"
+        app:layout_constraintEnd_toEndOf="@+id/tv_arrivalbusstop"
+        app:layout_constraintStart_toStartOf="@+id/tv_arrivalbusstop"
+        app:layout_constraintTop_toBottomOf="@+id/tv_arrivalbusstop" />
+
+    <TextView
+        android:id="@+id/tv_bell"
+        style="@style/generalText"
+        android:text="기사에게 알림보내기"
+        android:textSize="14dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintEnd_toEndOf="@+id/iv_bell"
+        app:layout_constraintStart_toStartOf="@+id/iv_bell"
+        app:layout_constraintTop_toBottomOf="@+id/iv_bell" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
