@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".Activity.LoginActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -70,6 +70,7 @@
         app:layout_constraintTop_toBottomOf="@+id/et_id" />
 
     <Button
+        android:id="@+id/btn_login"
         style="@style/boldText"
         android:layout_width="125dp"
         android:layout_height="45dp"

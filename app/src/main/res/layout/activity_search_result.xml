@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchResultActivity">
+    tools:context=".Activity.SearchResultActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -18,8 +18,8 @@
             android:id="@+id/iv_backbtn"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/back"
             android:layout_marginLeft="20dp"
+            android:src="@drawable/back"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -49,7 +49,7 @@
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
         <TextView
-            android:id="@+id/tv_search_busnum"
+            android:id="@+id/tv_searchbusnum"
             style="@style/boldText"
             android:layout_marginLeft="24dp"
             android:text="6427"
@@ -59,25 +59,30 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <LinearLayout
+            android:id="@+id/ll_bookmark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="35dp"
+            android:layout_marginRight="22dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
         <ImageView
             android:id="@+id/iv_staroutlined"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:layout_marginTop="35dp"
-            android:layout_marginRight="22dp"
             android:src="@drawable/star_outlined"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_gravity="center_horizontal"/>
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/tv_bookmark"
             style="@style/generalText"
             android:layout_marginTop="5dp"
             android:text="즐겨찾기"
-            android:textColor="@color/colorPrimaryDark"
-            app:layout_constraintEnd_toEndOf="@+id/iv_staroutlined"
-            app:layout_constraintStart_toStartOf="@+id/iv_staroutlined"
-            app:layout_constraintTop_toBottomOf="@+id/iv_staroutlined" />
+            android:textColor="@color/colorPrimaryDark"/>
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
@@ -93,31 +98,36 @@
     <TextView
         android:id="@+id/tv_arrivalbusstop"
         style="@style/generalText"
+        android:layout_marginTop="13dp"
         android:text="6정거장 전"
         android:textSize="17dp"
-        android:layout_marginTop="13dp"
         app:layout_constraintEnd_toEndOf="@+id/tv_arrivaltime"
         app:layout_constraintStart_toStartOf="@+id/tv_arrivaltime"
         app:layout_constraintTop_toBottomOf="@+id/tv_arrivaltime" />
 
-    <ImageView
-        android:id="@+id/iv_bell"
-        android:layout_width="100dp"
-        android:layout_height="120dp"
-        android:src="@drawable/bell"
+    <LinearLayout
+        android:id="@+id/ll_bell"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="90dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="@+id/tv_arrivalbusstop"
         app:layout_constraintStart_toStartOf="@+id/tv_arrivalbusstop"
-        app:layout_constraintTop_toBottomOf="@+id/tv_arrivalbusstop" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_arrivalbusstop">
 
-    <TextView
-        android:id="@+id/tv_bell"
-        style="@style/generalText"
-        android:text="기사에게 알림보내기"
-        android:textSize="14dp"
-        android:layout_marginTop="5dp"
-        app:layout_constraintEnd_toEndOf="@+id/iv_bell"
-        app:layout_constraintStart_toStartOf="@+id/iv_bell"
-        app:layout_constraintTop_toBottomOf="@+id/iv_bell" />
+        <ImageView
+            android:id="@+id/iv_bell"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/bell" />
+
+        <TextView
+            android:id="@+id/tv_bell"
+            style="@style/generalText"
+            android:layout_marginTop="5dp"
+            android:text="기사에게 알림보내기"
+            android:textSize="14dp" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

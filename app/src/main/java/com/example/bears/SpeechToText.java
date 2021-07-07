@@ -76,10 +76,11 @@ public class SpeechToText implements RecognitionListener {
     }
 
     @Override
-    public void onResults(Bundle results) { // 말을 하면 ArrayList에 단어를 넣고 textView에 단어를 이어줍니다.
+    public void onResults(Bundle results) { // 말을 하면 ArrayList에 단어를 넣고 textView에 단어를 이어 줌
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         Log.d("ArrayList", matches.toString());
         Toast.makeText(context, "음성인식 결과 : " + matches.toString(), Toast.LENGTH_SHORT).show();
+        // matches.toString()을 SearchResultActivity로 넘겨야 함
     }
 
     @Override
