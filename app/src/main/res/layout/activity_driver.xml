@@ -70,11 +70,14 @@
         app:layout_constraintTop_toTopOf="@+id/tv_driverbusnum" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_driver"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_driverbusnum" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_driverbusnum"
+        tools:listitem="@layout/listitem_driver"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

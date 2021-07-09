@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,7 +13,9 @@ import com.example.bears.R;
 
 public class SearchResultActivity extends AppCompatActivity {
     LinearLayout ll_bookmark, ll_bell;
-    ImageView iv_backbtn;
+    ImageView iv_backbtn, iv_star;
+    TextView tv_busnum, tv_arrvaltime, tv_arrivalbusstop;
+    int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,12 @@ public class SearchResultActivity extends AppCompatActivity {
         ll_bookmark = findViewById(R.id.ll_bookmark);
         ll_bell = findViewById(R.id.ll_bell);
         iv_backbtn = findViewById(R.id.iv_backbtn);
+        iv_star = findViewById(R.id.iv_star);
+        tv_busnum = findViewById(R.id.tv_searchbusnum);
+        tv_arrvaltime = findViewById(R.id.tv_arrivaltime);
+        tv_arrivalbusstop = findViewById(R.id.tv_arrivalbusstop);
+
+        tv_busnum.setText(busnumber);
 
         iv_backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,7 +45,15 @@ public class SearchResultActivity extends AppCompatActivity {
         ll_bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 북마크기능,,
+                i = 1 - i;
+                if (i == 0) {
+                    iv_star.setImageResource(R.drawable.star_outlined);
+                    //북마크에서 삭제
+                }
+                else{
+                    iv_star.setImageResource(R.drawable.star_filled);
+                    //북마크 추가
+                }
             }
         });
 

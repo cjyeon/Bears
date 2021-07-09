@@ -26,8 +26,8 @@
 
         <ImageView
             android:id="@+id/iv_starfilled"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
+            android:layout_width="30dp"
+            android:layout_height="35dp"
             android:src="@drawable/star_filled"
             android:layout_gravity="center_horizontal"/>
 
@@ -35,6 +35,7 @@
             android:id="@+id/tv_bookmark"
             style="@style/generalText"
             android:text="즐겨찾기"
+            android:layout_marginTop="3dp"
             android:textColor="@color/colorWhite"
             android:textSize="14dp" />
         </LinearLayout>
