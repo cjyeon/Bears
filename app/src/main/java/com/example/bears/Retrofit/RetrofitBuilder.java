@@ -15,13 +15,13 @@ public class RetrofitBuilder {
         }
         return retrofit;
     }
-    public static Retrofit getStaionsByPosList(){
-        if(retrofit == null){
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(Common.StaionsByPosListURL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-        }
-        return retrofit;
-    }
+//    public static Retrofit getStationInfo(){
+//        if(retrofit == null){
+//            retrofit = new Retrofit.Builder()
+//                    .baseUrl(Common.StationInfoURL)
+//                    .addConverterFactory()
+//                    .build();
+//        }
+//        return retrofit;
+//    }
 }

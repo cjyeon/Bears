@@ -6,10 +6,11 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-public class RetrofitService {
+public interface RetrofitService {
 
-//    @GET("weather?")
-//    Call<JsonObject> getWeather(@Query("lat") String lat,
-//                                @Query("lon") String lon,
-//                                @Query("APPID") String APPID);
+    @GET("stationByPos?")
+    Call<JsonObject> getStationByPos(@Query("serviceKey") String serviceKey,
+                                     @Query("tmX") String tmX,
+                                     @Query("tmY") String tmY,
+                                     @Query("radius") String radius);
 }
