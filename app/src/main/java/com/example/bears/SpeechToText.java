@@ -60,7 +60,7 @@ public class SpeechToText implements RecognitionListener {
                 message = "찾을 수 없음";
                 break;
             case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
-                message = "RECOGNIZER가 바쁨";
+                message = "RECOGNIZER가 바쁘다";
                 break;
             case SpeechRecognizer.ERROR_SERVER:
                 message = "서버가 이상함";
