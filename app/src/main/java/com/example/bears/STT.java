@@ -1,24 +1,38 @@
 package com.example.bears;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.example.bears.Activity.MainActivity;
+import com.example.bears.Activity.SearchResultActivity;
 
 import java.util.ArrayList;
 
-public class SpeechToText implements RecognitionListener {
+public class STT implements RecognitionListener {
     Context context;
+    TTS tts;
+    ImageView iv_voice;
 
-    public SpeechToText(Context context) {
+    public STT(Context context) {
         this.context = context;
+        tts = new TTS(context);
     }
 
     @Override
     public void onReadyForSpeech(Bundle params) {
-        Toast.makeText(context, "음성인식을 시작합니다.", Toast.LENGTH_SHORT).show();
+//        수정해야함
+        View view = LayoutInflater.from(context).inflate(R.layout.activity_main, null, false);
+        iv_voice = view.findViewById(R.id.iv_voice);
+        iv_voice.setImageResource(R.drawable.voice2);
     }
 
     @Override
@@ -79,8 +93,15 @@ public class SpeechToText implements RecognitionListener {
     public void onResults(Bundle results) { // 말을 하면 ArrayList에 단어를 넣고 textView에 단어를 이어 줌
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         Log.d("ArrayList", matches.toString());
+        Intent intent = new Intent(context, SearchResultActivity.class);
         Toast.makeText(context, "음성인식 결과 : " + matches.toString(), Toast.LENGTH_SHORT).show();
-        // matches.toString()을 SearchResultActivity로 넘겨야 함
+
+        if (!matches.toString().isEmpty()) {
+            intent.putExtra("busnumber", matches.toString());
+            tts.speech(matches.toString()+"번으로 검색합니다.");
+            context.startActivity(intent);
+        } else
+            tts.speech("검색어를 찾을 수 없습니다");
     }
 
     @Override

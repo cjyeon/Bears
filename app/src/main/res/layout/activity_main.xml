@@ -97,7 +97,7 @@
         android:layout_width="100dp"
         android:layout_height="120dp"
         android:src="@drawable/voice"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal" />
 
     <TextView
         android:id="@+id/tv_voice"
