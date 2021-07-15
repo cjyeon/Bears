@@ -2,13 +2,12 @@ package com.example.bears.Activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -19,10 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.bears.Model.StationByPosModel;
 import com.example.bears.R;
-import com.example.bears.Retrofit.RetrofitBuilder;
-import com.example.bears.Retrofit.RetrofitService;
 import com.example.bears.STT;
 import com.example.bears.TTS;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -32,12 +28,18 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
-import java.util.List;
-import java.util.Locale;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.io.IOException;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public class MainActivity extends AppCompatActivity {
     Intent intent;
@@ -45,21 +47,21 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout ll_voice, ll_bookmark, ll_driver;
     ImageView iv_searchbtn, iv_voice;
     EditText et_searchnum;
-    String tmX, tmY;
+    String tmX, tmY, url, servicekey;
     int pressedTime = 0;
     final int PERMISSION = 1;
     private FusedLocationProviderClient fusedLocationClient;
     public Location location;
-
     STT stt;
     TTS tts;
 
-    RetrofitService retrofitService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        servicekey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
 
         stt = new STT(this);
         tts = new TTS(this);
@@ -84,9 +86,6 @@ public class MainActivity extends AppCompatActivity {
                 .check();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        performAction();
-
-//        stationBuPos();
 
         ll_voice.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +99,14 @@ public class MainActivity extends AppCompatActivity {
                 mRecognizer = SpeechRecognizer.createSpeechRecognizer(MainActivity.this);
                 mRecognizer.setRecognitionListener(stt);
                 mRecognizer.startListening(intent);
+
+                url = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByPos?" +
+                        "serviceKey=" + servicekey +
+                        "&tmX=" + tmX +
+                        "&tmY=" + tmY +
+                        "&radius=" + "50";
+                OpenAPI busstop = new OpenAPI(url);
+                busstop.execute();
             }
         });
 
@@ -146,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @SuppressLint("MissingPermission")
-    private void performAction() {
+    private void performAction(){
         fusedLocationClient.getLastLocation()
                 .addOnFailureListener(this, new OnFailureListener() {
                     @Override
@@ -172,43 +179,6 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void stationBuPos() {
-        retrofitService = RetrofitBuilder.getStationInfo().create(RetrofitService.class);
-
-        Call<StationByPosModel> call = retrofitService.getStationByPos(
-                "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D",
-                "126.892473", "37.473272", "100");
-
-        call.enqueue(new Callback<StationByPosModel>() {
-            @Override
-            public void onResponse(Call<StationByPosModel> call, Response<StationByPosModel> response) {
-                Log.d("연결 성공", response.message());
-                Log.d("XML", response.body().toString());
-
-//                Log.d("아아아악", response.body().getServiceResult().getMsgBody().toString());
-
-
-//                if (response.body() != null) {
-//                    dataInfo = dataList.calender_results;
-//                    if (response.body().getCode().equals("200")) {
-//                        writingListAdapter = new WritingListAdapter(getApplicationContext(), dataInfo);
-//                        recyclerView.setAdapter(writingListAdapter);
-//                        tv_empty.setVisibility(View.GONE);
-//                    } else {
-//                        writingListAdapter = new WritingListAdapter(getApplicationContext(), dataInfo);
-//                        recyclerView.setAdapter(writingListAdapter);
-//                        tv_empty.setVisibility(View.VISIBLE);
-//                    }
-//                }
-            }
-
-            @Override
-            public void onFailure(Call<StationByPosModel> call, Throwable t) {
-                Log.d("ssss", t.getMessage());
-            }
-        });
-    }
-
     @Override
     public void onBackPressed() {
         if (pressedTime == 0) {
@@ -225,6 +195,66 @@ public class MainActivity extends AppCompatActivity {
 //                finish(); // app 종료 시키기
             }
         }
+    }
+
+    public class OpenAPI extends AsyncTask<Void, Void, String> {
+        private String url;
+
+        public OpenAPI(String url) {
+            this.url = url;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            // parsing할 url 지정(API 키 포함해서)
+
+            DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = null;
+            try {
+                dBuilder = dbFactoty.newDocumentBuilder();
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            }
+            Document doc = null;
+            try {
+                doc = dBuilder.parse(url);
+            } catch (IOException | SAXException e) {
+                e.printStackTrace();
+            }
+
+            // root tag
+            doc.getDocumentElement().normalize();
+            System.out.println("Root element: " + doc.getDocumentElement().getNodeName()); // Root element: result
+
+            // 파싱할 tag
+            NodeList nList = doc.getElementsByTagName("itemList");
+
+            for(int temp = 0; temp < nList.getLength(); temp++){
+                Node nNode = nList.item(temp);
+                if(nNode.getNodeType() == Node.ELEMENT_NODE){
+
+                    Element eElement = (Element) nNode;
+                    Log.d("OPEN_API","arsId  : " + getTagValue("arsId", eElement));
+                    Log.d("OPEN_API","stationId  : " + getTagValue("stationId", eElement));
+                    Log.d("OPEN_API","stationNm : " + getTagValue("stationNm", eElement));
+                }	// for end
+            }	// if end
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String str) {
+            super.onPostExecute(str);
+        }
+    }
+
+    private String getTagValue(String tag, Element eElement) {
+        NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();
+        Node nValue = (Node) nlList.item(0);
+        if(nValue == null)
+            return null;
+        return nValue.getNodeValue();
     }
 }
 

@@ -2,6 +2,7 @@ package com.example.bears.Retrofit;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.jaxb.JaxbConverterFactory;
 
 public class RetrofitBuilder {
     private static Retrofit retrofit = null;
@@ -15,13 +16,4 @@ public class RetrofitBuilder {
         }
         return retrofit;
     }
-//    public static Retrofit getStationInfo(){
-//        if(retrofit == null){
-//            retrofit = new Retrofit.Builder()
-//                    .baseUrl(Common.StationInfoURL)
-//                    .addConverterFactory()
-//                    .build();
-//        }
-//        return retrofit;
-//    }
 }

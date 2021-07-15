@@ -16,6 +16,8 @@ import com.example.bears.Activity.MainActivity;
 import com.example.bears.Activity.SearchResultActivity;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class STT implements RecognitionListener {
     Context context;
@@ -92,13 +94,16 @@ public class STT implements RecognitionListener {
     @Override
     public void onResults(Bundle results) { // 말을 하면 ArrayList에 단어를 넣고 textView에 단어를 이어 줌
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        Log.d("ArrayList", matches.toString());
+        String match = matches.toString();
+        Log.d("ArrayList", match);
         Intent intent = new Intent(context, SearchResultActivity.class);
-        Toast.makeText(context, "음성인식 결과 : " + matches.toString(), Toast.LENGTH_SHORT).show();
 
-        if (!matches.toString().isEmpty()) {
-            intent.putExtra("busnumber", matches.toString());
-            tts.speech(matches.toString()+"번으로 검색합니다.");
+        String result = match.substring(1, match.length()-1);
+        Toast.makeText(context, "음성인식 결과 : " + result, Toast.LENGTH_SHORT).show();
+
+        if (!matches.isEmpty()) {
+            intent.putExtra("busnumber", result);
+            tts.speech(result+"번으로 검색합니다.");
             context.startActivity(intent);
         } else
             tts.speech("검색어를 찾을 수 없습니다");

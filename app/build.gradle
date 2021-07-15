@@ -6,6 +6,11 @@ android {
     compileSdkVersion 29
     buildToolsVersion "30.0.1"
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         applicationId "com.example.bears"
         minSdkVersion 23
@@ -38,11 +43,14 @@ dependencies {
     implementation 'io.github.ParkSangGwon:tedpermission:2.3.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    // implementation 'com.airbnb.android:lottie:3.0.7'
 
-    implementation 'com.tickaroo.tikxml:annotation:0.8.15'
-    implementation 'com.tickaroo.tikxml:core:0.8.15'
-    implementation 'com.tickaroo.tikxml:retrofit-converter:0.8.15'
+//    implementation 'com.tickaroo.tikxml:annotation:0.8.15'
+//    implementation 'com.tickaroo.tikxml:core:0.8.15'
+//    implementation 'com.tickaroo.tikxml:retrofit-converter:0.8.15'
 
-    annotationProcessor 'com.tickaroo.tikxml:processor:0.8.15'
+//    annotationProcessor 'com.tickaroo.tikxml:processor:0.8.15'
+
+    implementation 'com.squareup.retrofit2:converter-jaxb:2.9.0'
 
 }
