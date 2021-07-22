@@ -1,4 +1,4 @@
-package com.example.bears;
+package com.example.bears.Utils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,15 +9,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.example.bears.Activity.MainActivity;
 import com.example.bears.Activity.SearchResultActivity;
+import com.example.bears.R;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class STT implements RecognitionListener {
     Context context;

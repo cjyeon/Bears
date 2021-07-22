@@ -1,4 +1,4 @@
-package com.example.bears;
+package com.example.bears.Utils;
 
 import android.app.Activity;
 import android.content.Context;

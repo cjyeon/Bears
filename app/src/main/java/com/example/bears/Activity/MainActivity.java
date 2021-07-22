@@ -2,9 +2,9 @@ package com.example.bears.Activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -19,8 +19,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bears.R;
-import com.example.bears.STT;
-import com.example.bears.TTS;
+import com.example.bears.Utils.BusStopOpenAPI;
+import com.example.bears.Utils.STT;
+import com.example.bears.Utils.TTS;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -28,18 +29,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 public class MainActivity extends AppCompatActivity {
     Intent intent;
@@ -54,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     public Location location;
     STT stt;
     TTS tts;
-
+    public static String station_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
                 .check();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        performAction();
+
 
         ll_voice.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,8 +97,10 @@ public class MainActivity extends AppCompatActivity {
                         "&tmX=" + tmX +
                         "&tmY=" + tmY +
                         "&radius=" + "50";
-                OpenAPI busstop = new OpenAPI(url);
-                busstop.execute();
+                BusStopOpenAPI busStop = new BusStopOpenAPI(url);
+                busStop.execute();
+
+                Log.d("station id", station_id);
             }
         });
 
@@ -139,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     PermissionListener permissionlistener = new PermissionListener() {
         @Override
         public void onPermissionGranted() {
@@ -153,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @SuppressLint("MissingPermission")
-    private void performAction(){
+    private void performAction() {
         fusedLocationClient.getLastLocation()
                 .addOnFailureListener(this, new OnFailureListener() {
                     @Override
@@ -173,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                             tmY = String.valueOf(location.getLatitude());
                             Log.d("경도", "getLongitude: " + location.getLongitude());
                             tmX = String.valueOf(location.getLongitude());
+
 
                         }
                     }
@@ -197,64 +191,64 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class OpenAPI extends AsyncTask<Void, Void, String> {
-        private String url;
-
-        public OpenAPI(String url) {
-            this.url = url;
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-
-            // parsing할 url 지정(API 키 포함해서)
-
-            DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = null;
-            try {
-                dBuilder = dbFactoty.newDocumentBuilder();
-            } catch (ParserConfigurationException e) {
-                e.printStackTrace();
-            }
-            Document doc = null;
-            try {
-                doc = dBuilder.parse(url);
-            } catch (IOException | SAXException e) {
-                e.printStackTrace();
-            }
-
-            // root tag
-            doc.getDocumentElement().normalize();
-            System.out.println("Root element: " + doc.getDocumentElement().getNodeName()); // Root element: result
-
-            // 파싱할 tag
-            NodeList nList = doc.getElementsByTagName("itemList");
-
-            for(int temp = 0; temp < nList.getLength(); temp++){
-                Node nNode = nList.item(temp);
-                if(nNode.getNodeType() == Node.ELEMENT_NODE){
-
-                    Element eElement = (Element) nNode;
-                    Log.d("OPEN_API","arsId  : " + getTagValue("arsId", eElement));
-                    Log.d("OPEN_API","stationId  : " + getTagValue("stationId", eElement));
-                    Log.d("OPEN_API","stationNm : " + getTagValue("stationNm", eElement));
-                }	// for end
-            }	// if end
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String str) {
-            super.onPostExecute(str);
-        }
-    }
-
-    private String getTagValue(String tag, Element eElement) {
-        NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();
-        Node nValue = (Node) nlList.item(0);
-        if(nValue == null)
-            return null;
-        return nValue.getNodeValue();
-    }
+//    public class OpenAPI extends AsyncTask<Void, Void, String> {
+//        private String url;
+//
+//        public OpenAPI(String url) {
+//            this.url = url;
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//
+//            // parsing할 url 지정(API 키 포함해서)
+//
+//            DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
+//            DocumentBuilder dBuilder = null;
+//            try {
+//                dBuilder = dbFactoty.newDocumentBuilder();
+//            } catch (ParserConfigurationException e) {
+//                e.printStackTrace();
+//            }
+//            Document doc = null;
+//            try {
+//                doc = dBuilder.parse(url);
+//            } catch (IOException | SAXException e) {
+//                e.printStackTrace();
+//            }
+//
+//            // root tag
+//            doc.getDocumentElement().normalize();
+//            System.out.println("Root element: " + doc.getDocumentElement().getNodeName()); // Root element: result
+//
+//            // 파싱할 tag
+//            NodeList nList = doc.getElementsByTagName("itemList");
+//
+//            for(int temp = 0; temp < nList.getLength(); temp++){
+//                Node nNode = nList.item(temp);
+//                if(nNode.getNodeType() == Node.ELEMENT_NODE){
+//
+//                    Element eElement = (Element) nNode;
+//                    Log.d("OPEN_API","arsId  : " + getTagValue("arsId", eElement));
+//                    Log.d("OPEN_API","stationId  : " + getTagValue("stationId", eElement));
+//                    Log.d("OPEN_API","stationNm : " + getTagValue("stationNm", eElement));
+//                }	// for end
+//            }	// if end
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String str) {
+//            super.onPostExecute(str);
+//        }
+//    }
+//
+//    private String getTagValue(String tag, Element eElement) {
+//        NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();
+//        Node nValue = (Node) nlList.item(0);
+//        if(nValue == null)
+//            return null;
+//        return nValue.getNodeValue();
+//    }
 }
 
