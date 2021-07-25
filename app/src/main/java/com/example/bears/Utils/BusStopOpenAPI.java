@@ -24,15 +24,12 @@ public class BusStopOpenAPI extends AsyncTask<Void, Void, String> {
 
         this.url = url;
     }
-    public String station_id;
-
-    public String getStation_id() {
-        return station_id;
-    }
+    
 
     @Override
     protected String doInBackground(Void... params) {
-        Log.d("doInBACKGROUNTD", "SGDDS");
+        String station_id = null;
+        Log.d("doInBACKGROUNTD", url);
         // parsing할 url 지정(API 키 포함해서)
 
         DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
@@ -64,9 +61,10 @@ public class BusStopOpenAPI extends AsyncTask<Void, Void, String> {
                 Log.d("OPEN_API", "arsId  : " + getTagValue("arsId", eElement));
 //                Log.d("OPEN_API", "stationId  : " + getTagValue("stationId", eElement));
                 station_id =  getTagValue("stationId", eElement);
-//                Log.d("OPEN_API", "stationId  : " + station_id);
+                Log.d("OPEN_API", "stationId  : " + station_id);
                 Log.d("OPEN_API", "stationNm : " + getTagValue("stationNm", eElement));
-                break;
+//                break;
+                return station_id;
 
             }    // for end
         }    // if end

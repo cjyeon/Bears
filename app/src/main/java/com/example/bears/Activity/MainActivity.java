@@ -30,6 +30,7 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     Intent intent;
@@ -96,11 +97,20 @@ public class MainActivity extends AppCompatActivity {
                         "serviceKey=" + servicekey +
                         "&tmX=" + tmX +
                         "&tmY=" + tmY +
-                        "&radius=" + "50";
-                BusStopOpenAPI busStop = new BusStopOpenAPI(url);
-                busStop.execute();
+                        "&radius=" + "200";
 
-                Log.d("station id", station_id);
+                try {
+                    BusStopOpenAPI busstop = new BusStopOpenAPI(url);
+                    busstop.execute();
+                    station_id = busstop.get();
+                    Log.d("결과", station_id);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("실패이유", "PerformAction", e.getCause());
+                }
+                ;
+
+
             }
         });
 

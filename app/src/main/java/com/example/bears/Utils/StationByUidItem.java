@@ -56,7 +56,6 @@ public class StationByUidItem extends AsyncTask<Void, Void, String> {
                 Element eElement = (Element) nNode;
                 Log.d("OPEN_API", "arsId  : " + getTagValue("arsId", eElement));
                 Log.d("OPEN_API", "stationId  : " + getTagValue("stationId", eElement));
-
                 Log.d("OPEN_API", "stationNm : " + getTagValue("stationNm", eElement));
                 break;
 
