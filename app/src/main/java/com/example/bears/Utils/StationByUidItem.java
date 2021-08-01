@@ -10,22 +10,29 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-public class StationByUidItem extends AsyncTask<Void, Void, String> {
+public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, String>> {
 
     private String url;
-    public StationByUidItem(String url) {
+    private String ars_Id;
+
+    public StationByUidItem(String url, String ars_Id) {
         this.url = url;
+        this.ars_Id = ars_Id;
     }
 
 
     @Override
-    protected String doInBackground(Void... params) {
-
+    protected HashMap<String, String> doInBackground(Void... params) {
+        HashMap<String, String> resultMap = new HashMap<String, String>();
+        String rtNm = null;
+        String arrmsg1 = null;
+        String arrmsg2 = null;
         // parsing할 url 지정(API 키 포함해서)
 
         DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
@@ -54,19 +61,33 @@ public class StationByUidItem extends AsyncTask<Void, Void, String> {
 
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element eElement = (Element) nNode;
-                Log.d("OPEN_API", "arsId  : " + getTagValue("arsId", eElement));
-                Log.d("OPEN_API", "stationId  : " + getTagValue("stationId", eElement));
-                Log.d("OPEN_API", "stationNm : " + getTagValue("stationNm", eElement));
-                break;
+                rtNm = getTagValue("rtNm", eElement);
 
+                if(rtNm.equals(ars_Id)){
+                    arrmsg1 = getTagValue("arrmsg1", eElement);
+                    arrmsg2 = getTagValue("arrmsg2", eElement);
+                    resultMap.put("rtNm", rtNm);
+                    resultMap.put("arrmsg1", arrmsg1);
+                    resultMap.put("arrmsg2", arrmsg2);
+//
+//                    Log.d("OPEN_API", "rtNm : " + rtNm);
+//                    Log.d("OPEN_API", "arrmsg1  : " + arrmsg1);
+//                    Log.d("OPEN_API", "arrmsg2  : " + arrmsg2);
+                    return resultMap;
+                }
             }    // for end
         }    // if end
         return null;
     }
 
+    //    @Override
+//    protected void onPostExecute(String str) {
+//        super.onPostExecute(str);
+//    }
     @Override
-    protected void onPostExecute(String str) {
-        super.onPostExecute(str);
+    protected void onPostExecute(HashMap<String, String> result) {
+        super.onPostExecute(result);
+        // TODO Auto-generated method stub
     }
 
 

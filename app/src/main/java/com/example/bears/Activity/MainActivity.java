@@ -2,7 +2,6 @@ package com.example.bears.Activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -10,9 +9,11 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.bears.R;
 import com.example.bears.Utils.BusStopOpenAPI;
 import com.example.bears.Utils.STT;
+import com.example.bears.Utils.StationByUidItem;
 import com.example.bears.Utils.TTS;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -29,42 +31,45 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     Intent intent;
     SpeechRecognizer mRecognizer;
     LinearLayout ll_voice, ll_bookmark, ll_driver;
-    ImageView iv_searchbtn, iv_voice;
-    EditText et_searchnum;
-    String tmX, tmY, url, servicekey;
+    ImageView iv_voice;
+    static TextView tv_mainbus;
+    static EditText et_busstop;
+    Button btn_search;
+    static String tmX, tmY, BusStopUrl, stationByUidUrl, BusStopServiceKey, ars_Id;
+    static String busnumber, stationNm;
     int pressedTime = 0;
     final int PERMISSION = 1;
     private FusedLocationProviderClient fusedLocationClient;
     public Location location;
     STT stt;
     TTS tts;
-    public static String station_id;
+    public HashMap<String, String> BusStopResultMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        servicekey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
+        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
 
         stt = new STT(this);
         tts = new TTS(this);
-
+        btn_search = findViewById(R.id.btn_search);
         ll_voice = findViewById(R.id.ll_voice);
         ll_bookmark = findViewById(R.id.ll_bookmark);
         ll_driver = findViewById(R.id.ll_driver);
-
+        tv_mainbus = findViewById(R.id.tv_mainbus);
         iv_voice = findViewById(R.id.iv_voice);
-        iv_searchbtn = findViewById(R.id.iv_searchbtn);
-        et_searchnum = findViewById(R.id.et_searchnum);
-
+        et_busstop = findViewById(R.id.et_busstop);
         intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
@@ -93,22 +98,26 @@ public class MainActivity extends AppCompatActivity {
                 mRecognizer.setRecognitionListener(stt);
                 mRecognizer.startListening(intent);
 
-                url = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByPos?" +
-                        "serviceKey=" + servicekey +
+                BusStopUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByPos?" +
+                        "serviceKey=" + BusStopServiceKey +
                         "&tmX=" + tmX +
                         "&tmY=" + tmY +
                         "&radius=" + "200";
 
                 try {
-                    BusStopOpenAPI busstop = new BusStopOpenAPI(url);
-                    busstop.execute();
-                    station_id = busstop.get();
-                    Log.d("결과", station_id);
+                    BusStopOpenAPI busStop = new BusStopOpenAPI(BusStopUrl);
+                    busStop.execute();
+                    BusStopResultMap = busStop.get();
+                    ars_Id = Objects.requireNonNull(BusStopResultMap.get("arsId"));
+                    stationNm = Objects.requireNonNull(BusStopResultMap.get("stationNm"));
+                    Log.d("정류장 이름", stationNm);
+                    Log.d("arsId 결과", ars_Id);
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e("실패이유", "PerformAction", e.getCause());
                 }
-                ;
 
 
             }
@@ -129,20 +138,19 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        iv_searchbtn.setOnClickListener(new View.OnClickListener() {
+        btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent(MainActivity.this, SearchResultActivity.class);
-                if (!et_searchnum.getText().toString().isEmpty()) {
-                    intent.putExtra("busnumber", et_searchnum.getText().toString());
-                    startActivity(intent);
-                    et_searchnum.setText(null); // 수정해야함
-                } else
-                    tts.speech("검색어를 입력해주세요");
+                Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
+                intent.putExtra("busnumber",busnumber);
+                intent.putExtra("ars_Id",ars_Id);
+                intent.putExtra("stationNm", stationNm);
+                startActivity(intent);
             }
         });
+
     }
+
     PermissionListener permissionlistener = new PermissionListener() {
         @Override
         public void onPermissionGranted() {
@@ -201,64 +209,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    public class OpenAPI extends AsyncTask<Void, Void, String> {
-//        private String url;
-//
-//        public OpenAPI(String url) {
-//            this.url = url;
-//        }
-//
-//        @Override
-//        protected String doInBackground(Void... params) {
-//
-//            // parsing할 url 지정(API 키 포함해서)
-//
-//            DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
-//            DocumentBuilder dBuilder = null;
-//            try {
-//                dBuilder = dbFactoty.newDocumentBuilder();
-//            } catch (ParserConfigurationException e) {
-//                e.printStackTrace();
-//            }
-//            Document doc = null;
-//            try {
-//                doc = dBuilder.parse(url);
-//            } catch (IOException | SAXException e) {
-//                e.printStackTrace();
-//            }
-//
-//            // root tag
-//            doc.getDocumentElement().normalize();
-//            System.out.println("Root element: " + doc.getDocumentElement().getNodeName()); // Root element: result
-//
-//            // 파싱할 tag
-//            NodeList nList = doc.getElementsByTagName("itemList");
-//
-//            for(int temp = 0; temp < nList.getLength(); temp++){
-//                Node nNode = nList.item(temp);
-//                if(nNode.getNodeType() == Node.ELEMENT_NODE){
-//
-//                    Element eElement = (Element) nNode;
-//                    Log.d("OPEN_API","arsId  : " + getTagValue("arsId", eElement));
-//                    Log.d("OPEN_API","stationId  : " + getTagValue("stationId", eElement));
-//                    Log.d("OPEN_API","stationNm : " + getTagValue("stationNm", eElement));
-//                }	// for end
-//            }	// if end
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String str) {
-//            super.onPostExecute(str);
-//        }
-//    }
-//
-//    private String getTagValue(String tag, Element eElement) {
-//        NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();
-//        Node nValue = (Node) nlList.item(0);
-//        if(nValue == null)
-//            return null;
-//        return nValue.getNodeValue();
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent intent2 = getIntent();
+        busnumber = intent2.getStringExtra("busnumber");
+        tv_mainbus.setText(busnumber);
+        if (stationNm != null) et_busstop.setText(stationNm);
+        else Log.d("stationNum", "널값");
+
+//        if (ars_Id != null) {
+//            if (busnumber != null) {
+//                busnumber = busnumber.replaceAll(" ", "");
+//                stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
+//                        "serviceKey=" + BusStopServiceKey +
+//                        "&arsId=" + ars_Id;
+//                StationByUidItem stationByUidItem = new StationByUidItem(stationByUidUrl, busnumber);
+//                stationByUidItem.execute();
+//                try {
+//                    StationByResultMap = stationByUidItem.get();
+//                    Log.d("StationByUid 결과", "rtNm : " + StationByResultMap.get("rtNm"));
+//                    Log.d("StationByUid 결과", "arrmsg1 : " + StationByResultMap.get("arrmsg1"));
+//                    Log.d("StationByUid 결과", "arrmsg2 : " + StationByResultMap.get("arrmsg2"));
+//                } catch (ExecutionException e) {
+//                    e.printStackTrace();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            } else Log.d("arsId는 있음", ars_Id);
+//        } else Log.d("arsId가 없음 ", "null 이라 안됨");
+
+    }
 }
 

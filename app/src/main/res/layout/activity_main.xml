@@ -18,26 +18,26 @@
             android:id="@+id/ll_bookmark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginStart="12dp"
             android:layout_marginTop="10dp"
+            android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/iv_starfilled"
-            android:layout_width="30dp"
-            android:layout_height="35dp"
-            android:src="@drawable/star_filled"
-            android:layout_gravity="center_horizontal"/>
+            <ImageView
+                android:id="@+id/iv_starfilled"
+                android:layout_width="30dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/star_filled" />
 
-        <TextView
-            android:id="@+id/tv_bookmark"
-            style="@style/generalText"
-            android:text="즐겨찾기"
-            android:layout_marginTop="3dp"
-            android:textColor="@color/colorWhite"
-            android:textSize="14dp" />
+            <TextView
+                android:id="@+id/tv_bookmark"
+                style="@style/generalText"
+                android:layout_marginTop="3dp"
+                android:text="즐겨찾기"
+                android:textColor="@color/colorWhite"
+                android:textSize="14dp" />
         </LinearLayout>
 
         <TextView
@@ -58,26 +58,26 @@
             android:id="@+id/ll_driver"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="12dp"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
+            app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/iv_driver"
-            android:layout_width="25dp"
-            android:layout_height="35dp"
-            android:src="@drawable/driver"
-            android:layout_gravity="center_horizontal"/>
+            <ImageView
+                android:id="@+id/iv_driver"
+                android:layout_width="25dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/driver" />
 
-        <TextView
-            android:id="@+id/tv_driver"
-            style="@style/generalText"
-            android:layout_marginTop="3dp"
-            android:text="기사전용"
-            android:textColor="@color/colorWhite"
-            android:textSize="14dp"/>
+            <TextView
+                android:id="@+id/tv_driver"
+                style="@style/generalText"
+                android:layout_marginTop="3dp"
+                android:text="기사전용"
+                android:textColor="@color/colorWhite"
+                android:textSize="14dp" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -86,52 +86,126 @@
         android:id="@+id/ll_voice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="77dp"
         android:orientation="vertical"
-        android:layout_marginTop="138dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" >
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
-    <ImageView
-        android:id="@+id/iv_voice"
-        android:layout_width="100dp"
-        android:layout_height="120dp"
-        android:src="@drawable/voice"
-        android:layout_gravity="center_horizontal" />
+        <ImageView
+            android:id="@+id/iv_voice"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/voice" />
 
-    <TextView
-        android:id="@+id/tv_voice"
-        style="@style/generalText"
-        android:text="이용할 버스 번호를 말씀하세요"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="14dp"
-        android:layout_marginTop="25dp"/>
+        <TextView
+            android:id="@+id/tv_voice"
+            style="@style/generalText"
+            android:layout_marginTop="25dp"
+            android:text="이용할 버스 번호를 말씀하세요"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="14dp" />
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/et_searchnum"
-        android:layout_width="232dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:hint="버스번호를 입력해 주세요"
-        android:textColorHint="@color/colorPrimaryDark"
-        android:textSize="16dp"
-        android:inputType="number"
-        android:backgroundTint="@color/colorPrimaryDark"
+    <LinearLayout
+        android:id="@+id/ll_mainbus"
+        android:layout_width="290dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/main_border"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/ll_voice"
         app:layout_constraintStart_toStartOf="@+id/ll_voice"
-        app:layout_constraintTop_toBottomOf="@+id/ll_voice" />
+        app:layout_constraintTop_toBottomOf="@+id/ll_voice">
+        
+        <ImageView
+            android:id="@+id/iv_bus"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/bus"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="17dp"/>
 
-    <ImageView
-        android:id="@+id/iv_searchbtn"
-        android:layout_width="30dp"
+        <TextView
+            android:id="@+id/tv_mainbus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_gravity="center_vertical"
+            android:textSize="16dp"
+            style="@style/generalText"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_mainbusstop"
+        android:layout_width="290dp"
+        android:layout_height="65dp"
+        android:background="@drawable/main_border"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/ll_mainbus"
+        app:layout_constraintStart_toStartOf="@+id/ll_mainbus"
+        app:layout_constraintTop_toBottomOf="@+id/ll_mainbus">
+
+        <ImageView
+            android:id="@+id/iv_location"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="17dp"
+            android:src="@drawable/location" />
+
+        <EditText
+            android:id="@+id/et_busstop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="25dp"
+            android:background="@null"
+            android:hint="정류장 번호를 직접 입력하세요"
+            android:textSize="16dp"
+            style="@style/generalText"/>
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_search"
+        style="@style/generalText"
+        android:layout_width="85dp"
         android:layout_height="30dp"
-        android:layout_marginEnd="4dp"
-        android:src="@drawable/search"
-        android:layout_marginTop="3dp"
-        app:layout_constraintBottom_toBottomOf="@+id/et_searchnum"
-        app:layout_constraintEnd_toEndOf="@+id/et_searchnum"
-        app:layout_constraintTop_toTopOf="@+id/et_searchnum"
-        app:layout_constraintVertical_bias="0.0" />
+        android:background="@drawable/loginbtn_border"
+        android:text="검색"
+        android:textColor="@color/colorWhite"
+        android:layout_marginTop="30dp"
+        app:layout_constraintEnd_toEndOf="@+id/ll_mainbusstop"
+        app:layout_constraintStart_toStartOf="@+id/ll_mainbusstop"
+        app:layout_constraintTop_toBottomOf="@+id/ll_mainbusstop" />
+
+
+<!--    <EditText-->
+<!--        android:id="@+id/et_searchnum"-->
+<!--        android:layout_width="232dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:backgroundTint="@color/colorPrimaryDark"-->
+<!--        android:hint="버스번호를 입력해 주세요"-->
+<!--        android:inputType="number"-->
+<!--        android:textColorHint="@color/colorPrimaryDark"-->
+<!--        android:textSize="16dp"-->
+<!--        tools:layout_editor_absoluteX="86dp"-->
+<!--        tools:layout_editor_absoluteY="568dp" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/iv_searchbtn"-->
+<!--        android:layout_width="30dp"-->
+<!--        android:layout_height="30dp"-->
+<!--        android:layout_marginTop="3dp"-->
+<!--        android:layout_marginEnd="4dp"-->
+<!--        android:src="@drawable/search"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/et_searchnum"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/et_searchnum"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/et_searchnum"-->
+<!--        app:layout_constraintVertical_bias="0.0" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

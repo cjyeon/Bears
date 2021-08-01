@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.bears.Activity.MainActivity;
 import com.example.bears.Activity.SearchResultActivity;
 import com.example.bears.R;
 
@@ -93,7 +94,7 @@ public class STT implements RecognitionListener {
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         String match = matches.toString();
         Log.d("ArrayList", match);
-        Intent intent = new Intent(context, SearchResultActivity.class);
+        Intent intent = new Intent(context, MainActivity.class);
 
         String result = match.substring(1, match.length()-1);
         Toast.makeText(context, "음성인식 결과 : " + result, Toast.LENGTH_SHORT).show();
