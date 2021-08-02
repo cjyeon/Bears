@@ -97,7 +97,6 @@ public class STT implements RecognitionListener {
         Intent intent = new Intent(context, MainActivity.class);
 
         String result = match.substring(1, match.length()-1);
-        Toast.makeText(context, "음성인식 결과 : " + result, Toast.LENGTH_SHORT).show();
 
         if (!matches.isEmpty()) {
             intent.putExtra("busnumber", result);

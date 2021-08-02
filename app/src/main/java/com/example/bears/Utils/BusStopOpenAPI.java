@@ -1,7 +1,10 @@
 package com.example.bears.Utils;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.example.bears.Activity.MainActivity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -74,15 +77,12 @@ public class BusStopOpenAPI extends AsyncTask<Void, Void, HashMap<String,String>
         }    // if end
         return null;
     }
+
     @Override
     protected void onPostExecute(HashMap<String, String> result) {
         super.onPostExecute(result);
         // TODO Auto-generated method stub
     }
-//    @Override
-//    protected void onPostExecute(String str) {
-//        super.onPostExecute(str);
-//    }
 
 
     private String getTagValue(String tag, Element eElement) {
