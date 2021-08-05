@@ -33,6 +33,7 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
         String rtNm = null;
         String arrmsg1 = null;
         String arrmsg2 = null;
+        String vehId1 =null;
         // parsing할 url 지정(API 키 포함해서)
 
         DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
@@ -64,12 +65,13 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
                 rtNm = getTagValue("rtNm", eElement);
 
                 if(rtNm.equals(ars_Id)){
+                    vehId1 = getTagValue("busRouteId",eElement);
                     arrmsg1 = getTagValue("arrmsg1", eElement);
                     arrmsg2 = getTagValue("arrmsg2", eElement);
                     resultMap.put("rtNm", rtNm);
                     resultMap.put("arrmsg1", arrmsg1);
                     resultMap.put("arrmsg2", arrmsg2);
-//
+                    resultMap.put("vehId1", vehId1);
 //                    Log.d("OPEN_API", "rtNm : " + rtNm);
 //                    Log.d("OPEN_API", "arrmsg1  : " + arrmsg1);
 //                    Log.d("OPEN_API", "arrmsg2  : " + arrmsg2);

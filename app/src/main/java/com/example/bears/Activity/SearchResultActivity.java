@@ -1,6 +1,5 @@
 package com.example.bears.Activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -10,32 +9,33 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 
-import com.example.bears.BookmarkAdapter;
+import com.example.bears.Model.LoginModel;
 import com.example.bears.R;
-import com.example.bears.Room.BookmarkDB;
-import com.example.bears.Room.BookmarkDao;
-import com.example.bears.Room.BookmarkEntity;
+import com.example.bears.Retrofit.RetrofitBuilder;
+import com.example.bears.Retrofit.RetrofitService;
 import com.example.bears.Utils.StationByUidItem;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SearchResultActivity extends AppCompatActivity {
     LinearLayout ll_bookmark, ll_bell;
     ImageView iv_backbtn, iv_star;
     TextView tv_busnum, tv_arrvaltime, tv_arrivalbusstop;
     int i = 0;
-    static String busnumber, ars_Id, stationNm,result;
+    static String busnumber, ars_Id, stationNm,result,vehId1;
     String stationByUidUrl, BusStopServiceKey,seconds,minutes,corrent_result;
     public HashMap<String, String> StationByResultMap;
-    BookmarkAdapter bookmarkAdapter;
     String [] array;
-
+    RetrofitService retrofitService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +94,7 @@ public class SearchResultActivity extends AppCompatActivity {
                                     stationByUidItem.execute();
                                     StationByResultMap = stationByUidItem.get();
                                     corrent_result = StationByResultMap.get("arrmsg1");
+                                    vehId1 = StationByResultMap.get("vehId1");
                                     if(!corrent_result.equals(result)) {
                                         result = corrent_result;
                                         Log.d("StationByUid 결과", "arrmsg1 : " + result);
@@ -140,26 +141,6 @@ public class SearchResultActivity extends AppCompatActivity {
             }
         });
 
-//        mContext = getApplicationContext();
-
-        // 메인 스레드에서 DB 접근 불가 -> 읽고 쓸 때 스레드 사용
-        class InsertRunnable implements Runnable {
-            @Override
-            public void run() {
-                BookmarkEntity bookmarkEntity = new BookmarkEntity(stationNm, ars_Id, busnumber);
-                BookmarkDB.getInstance(getApplicationContext()).bookmarkDao().insert(bookmarkEntity);
-                Log.d("저장!!!@!@@!@", stationNm);
-            }
-        }
-
-//        //UI 갱신 (라이브데이터 Observer 이용, 해당 디비값이 변화가생기면 실행됨)
-//        BookmarkDB.getInstance(getApplicationContext()).bookmarkDao().getAll().observe(this, new Observer<List<BookmarkEntity>>() {
-//            @Override
-//            public void onChanged(List<BookmarkEntity> data) {
-//                bookmarkAdapter.setItem(data);
-//            }
-//        });
-
         ll_bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,22 +148,49 @@ public class SearchResultActivity extends AppCompatActivity {
                 if (i == 0) {
                     iv_star.setImageResource(R.drawable.star_outlined);
                     //북마크에서 삭제
-                    BookmarkDB.destroyInstance();
                 } else {
                     iv_star.setImageResource(R.drawable.star_filled);
                     //북마크 추가
-                    InsertRunnable insertRunnable = new InsertRunnable();
-                    Thread t = new Thread(insertRunnable);
-                    t.start();
                 }
             }
         });
-
 
         ll_bell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 버스기사에게 알림
+                retrofitService = RetrofitBuilder.getRetrofit().create(RetrofitService.class);
+                Call<LoginModel> call = retrofitService.NoticeBusStop(ars_Id,vehId1);
+                call.enqueue(new Callback<LoginModel>() {
+                    @Override
+                    public void onResponse(Call<LoginModel> call, Response<LoginModel> response) {
+                        if (response.isSuccessful()) {
+                            Log.d("연결 성공", response.message());
+                            LoginModel loginModel = response.body();
+                            Log.v("Code", loginModel.getCode());
+                            Log.v("Message", loginModel.getMessage());
+                            if (loginModel.getCode().equals("200")) {
+                                Toast.makeText(SearchResultActivity.this, "알림을 보냈습니다."
+                                        , Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(SearchResultActivity.this, "알림실패"
+                                        , Toast.LENGTH_SHORT).show();
+                                Log.d("ssss", response.message());
+                            }
+                        } else if (response.code() == 404) {
+                            Toast.makeText(SearchResultActivity.this, "인터넷 연결을 확인해주세요"
+                                    , Toast.LENGTH_SHORT).show();
+                            Log.d("ssss", response.message());
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<LoginModel> call, Throwable t) {
+                        Log.d("ssss", t.getMessage());
+                    }
+                });
+
             }
         });
 
