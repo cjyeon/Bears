@@ -31,7 +31,7 @@ import retrofit2.Response;
 public class SearchResultActivity extends AppCompatActivity {
     LinearLayout ll_bookmark, ll_bell;
     ImageView iv_backbtn, iv_star,lv_bell;
-    TextView tv_busnum, tv_arrvaltime, tv_arrivalbusstop;
+    TextView tv_busnum, tv_arrvaltime, tv_arrivalbusstop, tv_curBusStop;
     static String busnumber, ars_Id, stationName, result, vehId1, nextStation;
     String stationByUidUrl, BusStopServiceKey, seconds, minutes, current_result;
     public HashMap<String, String> StationByResultMap;
@@ -48,8 +48,9 @@ public class SearchResultActivity extends AppCompatActivity {
         busnumber = intent.getStringExtra("busnumber");
         ars_Id = intent.getStringExtra("ars_Id");
         stationName = intent.getStringExtra("stationNm");
-        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
+        BusStopServiceKey = "%2Fvd166HaBUDR77oPC3OxbJw8A9HfCkD7s5zPirOIZZGsorMCJDXLwn4aM%2Bx2G3Qm2UZOuvp5zcTEFs5cgqM1Gg%3D%3D";
         result =null;
+
         ll_bookmark = findViewById(R.id.ll_bookmark);
         ll_bell = findViewById(R.id.ll_bell);
         lv_bell = findViewById(R.id.iv_bell);
@@ -58,8 +59,10 @@ public class SearchResultActivity extends AppCompatActivity {
         tv_busnum = findViewById(R.id.tv_searchbusnum);
         tv_arrvaltime = findViewById(R.id.tv_arrivaltime);
         tv_arrivalbusstop = findViewById(R.id.tv_arrivalbusstop);
+        tv_curBusStop = findViewById(R.id.tv_curBusStop);
 
         tv_busnum.setText(busnumber);
+        tv_curBusStop.setText(stationName);
 
         // 즐겨찾기 유무 확인 후 아이콘 적용
         class SelectRunnable implements Runnable {
@@ -90,6 +93,7 @@ public class SearchResultActivity extends AppCompatActivity {
                     StationByResultMap = stationByUidItem.get();
                     current_result = StationByResultMap.get("arrmsg1");
                     vehId1 = StationByResultMap.get("vehId1");
+                    nextStation = StationByResultMap.get("nxtStn");
                     if(!current_result.equals(result)) {
                         result = current_result;
                         Log.d("StationByUid 결과", "arrmsg1 : " + result);

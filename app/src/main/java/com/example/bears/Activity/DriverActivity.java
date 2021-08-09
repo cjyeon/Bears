@@ -35,8 +35,6 @@ public class DriverActivity extends AppCompatActivity {
     LinearLayoutManager linearLayoutManager;
     TextView tv_beaconnum;
     private Socket mSocket;
-    private String username;
-    private String roomNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
