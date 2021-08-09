@@ -63,7 +63,9 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element eElement = (Element) nNode;
                 rtNm = getTagValue("rtNm", eElement);
-
+                if(rtNm==null){
+                    Log.d("에이피아이 널값문제", "rtNm : 널이다");
+                }
                 if(rtNm.equals(ars_Id)){
                     vehId1 = getTagValue("busRouteId",eElement);
                     arrmsg1 = getTagValue("arrmsg1", eElement);

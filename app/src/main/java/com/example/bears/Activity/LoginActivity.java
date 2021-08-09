@@ -56,7 +56,8 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     //서버에서 아이디 비번 일치하는 지 확인받아와야 함
                     retrofitService = RetrofitBuilder.getRetrofit().create(RetrofitService.class);
-                    Call<LoginModel> call = retrofitService.getLoginCheck(et_id.getText().toString(), et_pw.getText().toString());
+                    String id = et_id.getText().toString();
+                    Call<LoginModel> call = retrofitService.getLoginCheck(id, et_pw.getText().toString());
                     call.enqueue(new Callback<LoginModel>() {
                         @Override
                         public void onResponse(Call<LoginModel> call, Response<LoginModel> response) {
@@ -67,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.v("Message", loginModel.getMessage());
                                 if (loginModel.getCode().equals("200")) {
                                     Intent intent = new Intent(LoginActivity.this, DriverActivity.class);
+                                    intent.putExtra("beaconID",id);
                                     startActivity(intent);
                                     finish();
                                 } else {

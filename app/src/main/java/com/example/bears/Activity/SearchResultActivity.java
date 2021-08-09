@@ -1,6 +1,7 @@
 package com.example.bears.Activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
@@ -28,7 +29,7 @@ import retrofit2.Response;
 
 public class SearchResultActivity extends AppCompatActivity {
     LinearLayout ll_bookmark, ll_bell;
-    ImageView iv_backbtn, iv_star;
+    ImageView iv_backbtn, iv_star,lv_bell;
     TextView tv_busnum, tv_arrvaltime, tv_arrivalbusstop;
     int i = 0;
     static String busnumber, ars_Id, stationNm,result,vehId1;
@@ -45,10 +46,11 @@ public class SearchResultActivity extends AppCompatActivity {
         busnumber = intent.getStringExtra("busnumber");
         ars_Id = intent.getStringExtra("ars_Id");
         stationNm = intent.getStringExtra("stationNm");
-        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
+        BusStopServiceKey = "%2Fvd166HaBUDR77oPC3OxbJw8A9HfCkD7s5zPirOIZZGsorMCJDXLwn4aM%2Bx2G3Qm2UZOuvp5zcTEFs5cgqM1Gg%3D%3D";
         result =null;
         ll_bookmark = findViewById(R.id.ll_bookmark);
         ll_bell = findViewById(R.id.ll_bell);
+        lv_bell = findViewById(R.id.iv_bell);
         iv_backbtn = findViewById(R.id.iv_backbtn);
         iv_star = findViewById(R.id.iv_star);
         tv_busnum = findViewById(R.id.tv_searchbusnum);
@@ -68,9 +70,25 @@ public class SearchResultActivity extends AppCompatActivity {
                 stationByUidItem.execute();
                 try {
                     StationByResultMap = stationByUidItem.get();
-                    Log.d("StationByUid 결과", "rtNm : " + StationByResultMap.get("rtNm"));
-                    Log.d("StationByUid 결과", "arrmsg1 : " + StationByResultMap.get("arrmsg1"));
-                    Log.d("StationByUid 결과", "arrmsg2 : " + StationByResultMap.get("arrmsg2"));
+                    corrent_result = StationByResultMap.get("arrmsg1");
+                    vehId1 = StationByResultMap.get("vehId1");
+                    if(!corrent_result.equals(result)) {
+                        result = corrent_result;
+                        Log.d("StationByUid 결과", "arrmsg1 : " + result);
+                        try {
+                            if(!result.equals("[차고지출발]")){
+                                array = result.split("\\[");
+                                minutes = array[0].substring(0, result.indexOf("분"));
+                                seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
+                                countDown();}
+                        } catch (Exception e) {
+                            tv_arrvaltime.setText(result);
+                        }
+                        if (result != "곧 도착") {
+                            String result2 = array[1].substring(0, array[1].length() - 1);
+                            tv_arrivalbusstop.setText(result2);
+                        }
+                    }
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
@@ -84,7 +102,7 @@ public class SearchResultActivity extends AppCompatActivity {
             public void run() {
                 while (!Thread.interrupted())
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(5000);
                         runOnUiThread(new Runnable() // start actions in UI thread
                         {
                             @Override
@@ -99,15 +117,15 @@ public class SearchResultActivity extends AppCompatActivity {
                                         result = corrent_result;
                                         Log.d("StationByUid 결과", "arrmsg1 : " + result);
                                         try {
+                                            if(!result.equals("[차고지출발]")){
                                             array = result.split("\\[");
                                             minutes = array[0].substring(0, result.indexOf("분"));
                                             seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
-                                            countDown();
-//                                        tv_arrvaltime.setText(minutes+"분 "+seconds+"초");
+                                            countDown();}
                                         } catch (Exception e) {
                                             tv_arrvaltime.setText(result);
                                         }
-                                        if (result != "곧도착") {
+                                        if (result != "곧 도착") {
                                             String result2 = array[1].substring(0, array[1].length() - 1);
                                             tv_arrivalbusstop.setText(result2);
                                         }
@@ -160,7 +178,7 @@ public class SearchResultActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // 버스기사에게 알림
                 retrofitService = RetrofitBuilder.getRetrofit().create(RetrofitService.class);
-                Call<LoginModel> call = retrofitService.NoticeBusStop(ars_Id,vehId1);
+                Call<LoginModel> call = retrofitService.NoticeBusStop(busnumber,ars_Id,vehId1);
                 call.enqueue(new Callback<LoginModel>() {
                     @Override
                     public void onResponse(Call<LoginModel> call, Response<LoginModel> response) {
@@ -172,6 +190,7 @@ public class SearchResultActivity extends AppCompatActivity {
                             if (loginModel.getCode().equals("200")) {
                                 Toast.makeText(SearchResultActivity.this, "알림을 보냈습니다."
                                         , Toast.LENGTH_SHORT).show();
+                                lv_bell.setColorFilter(Color.parseColor("#55ff0000"));//색변경
                             } else {
                                 Toast.makeText(SearchResultActivity.this, "알림실패"
                                         , Toast.LENGTH_SHORT).show();

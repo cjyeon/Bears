@@ -147,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("ars_Id",ars_Id);
                 intent.putExtra("stationNm", stationNm);
                 startActivity(intent);
+
             }
         });
 

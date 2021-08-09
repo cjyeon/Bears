@@ -10,11 +10,11 @@
         android:id="@+id/tv_busstop"
         style="@style/generalText"
         android:layout_marginLeft="25dp"
-        android:text="성신여자대학교 입구"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="성신여자대학교 입구" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

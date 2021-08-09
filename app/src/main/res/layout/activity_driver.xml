@@ -53,21 +53,21 @@
     <TextView
         android:id="@+id/tv_driverbusnum"
         style="@style/generalText"
-        android:text="88"
-        android:textSize="16dp"
         android:layout_marginTop="7dp"
+        android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        tools:text="88" />
 
     <TextView
         android:id="@+id/tv_beaconnum"
         style="@style/generalText"
-        android:text="비콘 고유번호"
         android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_driverbusnum"
-        app:layout_constraintTop_toTopOf="@+id/tv_driverbusnum" />
+        app:layout_constraintTop_toTopOf="@+id/tv_driverbusnum"
+        tools:text="비콘 고유번호" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_driver"

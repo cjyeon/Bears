@@ -18,7 +18,8 @@ public interface RetrofitService {
 
 
     @POST("/")
-    Call<LoginModel> NoticeBusStop(@Field("id") String arsId,
+    Call<LoginModel> NoticeBusStop(@Field("busnumber") String busnumber,
+                                   @Field("id") String arsId,
                                    @Field("password") String busRoutedId);
 
 }
