@@ -15,16 +15,17 @@ public class BookmarkEntity {
     @ColumnInfo(name="stationId")
     public String stationId;
 
-//    @ColumnInfo(name="busStopDirec")
-//    public String busStopDirec;
-
     @ColumnInfo(name="busNum")
     public String busNum;
 
-    public BookmarkEntity(String stationName, String stationId, String busNum) {
+    @ColumnInfo(name="nextStation")
+    public String nextStation;
+
+    public BookmarkEntity(String stationName, String stationId, String busNum, String nextStation) {
         this.stationName = stationName;
         this.stationId = stationId;
         this.busNum = busNum;
+        this.nextStation = nextStation;
     }
 
     public int getId() {
@@ -58,4 +59,8 @@ public class BookmarkEntity {
     public void setBusNum(String busNum) {
         this.busNum = busNum;
     }
+
+    public String getNextStation() { return nextStation; }
+
+    public void setNextStation(String nextStation) { this.nextStation = nextStation; }
 }

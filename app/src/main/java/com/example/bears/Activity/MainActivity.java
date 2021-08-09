@@ -2,7 +2,6 @@ package com.example.bears.Activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -23,7 +22,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.bears.R;
 import com.example.bears.Utils.BusStopOpenAPI;
 import com.example.bears.Utils.STT;
-import com.example.bears.Utils.StationByUidItem;
 import com.example.bears.Utils.TTS;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -35,7 +33,6 @@ import com.gun0912.tedpermission.TedPermission;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     Intent intent;
@@ -45,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
     static TextView tv_mainbus;
     static EditText et_busstop;
     Button btn_search;
-    static String tmX, tmY, BusStopUrl, stationByUidUrl, BusStopServiceKey, ars_Id;
-    static String busnumber, stationNm;
+    static String tmX, tmY, BusStopUrl, BusStopServiceKey, ars_Id;
+    static String busnumber, stationName;
     int pressedTime = 0;
     final int PERMISSION = 1;
     private FusedLocationProviderClient fusedLocationClient;
@@ -85,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         performAction();
 
-
         ll_voice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
                     busStop.execute();
                     BusStopResultMap = busStop.get();
                     ars_Id = Objects.requireNonNull(BusStopResultMap.get("arsId"));
-                    stationNm = Objects.requireNonNull(BusStopResultMap.get("stationNm"));
-                    Log.d("정류장 이름", stationNm);
+                    stationName = Objects.requireNonNull(BusStopResultMap.get("stationNm"));
+                    Log.d("정류장 이름", stationName);
                     Log.d("arsId 결과", ars_Id);
 
 
@@ -119,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                     Log.e("실패이유", "PerformAction", e.getCause());
                 }
-
 
             }
         });
@@ -139,13 +134,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
                 intent.putExtra("busnumber",busnumber);
                 intent.putExtra("ars_Id",ars_Id);
-                intent.putExtra("stationNm", stationNm);
+                intent.putExtra("stationNm", stationName);
                 startActivity(intent);
 
             }
@@ -218,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent2 = getIntent();
         busnumber = intent2.getStringExtra("busnumber");
         tv_mainbus.setText(busnumber);
-        if (stationNm != null) et_busstop.setText(stationNm);
+        if (stationName != null) et_busstop.setText(stationName);
         else Log.d("stationNum", "널값");
 
 //        if (ars_Id != null) {

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,6 +17,8 @@ import com.example.bears.Model.LoginModel;
 import com.example.bears.R;
 import com.example.bears.Retrofit.RetrofitBuilder;
 import com.example.bears.Retrofit.RetrofitService;
+import com.example.bears.Room.BookmarkDB;
+import com.example.bears.Room.BookmarkEntity;
 import com.example.bears.Utils.StationByUidItem;
 
 import java.util.HashMap;
@@ -31,12 +32,13 @@ public class SearchResultActivity extends AppCompatActivity {
     LinearLayout ll_bookmark, ll_bell;
     ImageView iv_backbtn, iv_star,lv_bell;
     TextView tv_busnum, tv_arrvaltime, tv_arrivalbusstop;
-    int i = 0;
-    static String busnumber, ars_Id, stationNm,result,vehId1;
-    String stationByUidUrl, BusStopServiceKey,seconds,minutes,corrent_result;
+    static String busnumber, ars_Id, stationName, result, vehId1, nextStation;
+    String stationByUidUrl, BusStopServiceKey, seconds, minutes, current_result;
     public HashMap<String, String> StationByResultMap;
     String [] array;
     RetrofitService retrofitService;
+    int i;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +47,8 @@ public class SearchResultActivity extends AppCompatActivity {
         Intent intent = getIntent();
         busnumber = intent.getStringExtra("busnumber");
         ars_Id = intent.getStringExtra("ars_Id");
-        stationNm = intent.getStringExtra("stationNm");
-        BusStopServiceKey = "%2Fvd166HaBUDR77oPC3OxbJw8A9HfCkD7s5zPirOIZZGsorMCJDXLwn4aM%2Bx2G3Qm2UZOuvp5zcTEFs5cgqM1Gg%3D%3D";
+        stationName = intent.getStringExtra("stationNm");
+        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
         result =null;
         ll_bookmark = findViewById(R.id.ll_bookmark);
         ll_bell = findViewById(R.id.ll_bell);
@@ -59,6 +61,22 @@ public class SearchResultActivity extends AppCompatActivity {
 
         tv_busnum.setText(busnumber);
 
+        // 즐겨찾기 유무 확인 후 아이콘 적용
+        class SelectRunnable implements Runnable {
+            @Override
+            public void run() {
+                if (BookmarkDB.getInstance(getApplicationContext()).bookmarkDao().getCountBookmark(busnumber, ars_Id) == 0) {
+                    i = 1;
+                    iv_star.setImageResource(R.drawable.star_outlined);
+                } else {
+                    i = 0;
+                    iv_star.setImageResource(R.drawable.star_filled);
+                }
+            }
+        }
+        SelectRunnable selectRunnable = new SelectRunnable();
+        Thread t = new Thread(selectRunnable);
+        t.start();
 
         if (ars_Id != null) {
             if (busnumber != null) {
@@ -70,17 +88,18 @@ public class SearchResultActivity extends AppCompatActivity {
                 stationByUidItem.execute();
                 try {
                     StationByResultMap = stationByUidItem.get();
-                    corrent_result = StationByResultMap.get("arrmsg1");
+                    current_result = StationByResultMap.get("arrmsg1");
                     vehId1 = StationByResultMap.get("vehId1");
-                    if(!corrent_result.equals(result)) {
-                        result = corrent_result;
+                    if(!current_result.equals(result)) {
+                        result = current_result;
                         Log.d("StationByUid 결과", "arrmsg1 : " + result);
                         try {
                             if(!result.equals("[차고지출발]")){
                                 array = result.split("\\[");
                                 minutes = array[0].substring(0, result.indexOf("분"));
                                 seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
-                                countDown();}
+                                countDown(minutes,seconds);
+                            }
                         } catch (Exception e) {
                             tv_arrvaltime.setText(result);
                         }
@@ -110,30 +129,28 @@ public class SearchResultActivity extends AppCompatActivity {
                                 try {
                                     StationByUidItem stationByUidItem = new StationByUidItem(stationByUidUrl, busnumber);
                                     stationByUidItem.execute();
+
                                     StationByResultMap = stationByUidItem.get();
-                                    corrent_result = StationByResultMap.get("arrmsg1");
+                                    current_result = StationByResultMap.get("arrmsg1");
                                     vehId1 = StationByResultMap.get("vehId1");
-                                    if(!corrent_result.equals(result)) {
-                                        result = corrent_result;
+                                    if(!current_result.equals(result)) {
+                                        result = current_result;
                                         Log.d("StationByUid 결과", "arrmsg1 : " + result);
                                         try {
-                                            if(!result.equals("[차고지출발]")){
-                                            array = result.split("\\[");
-                                            minutes = array[0].substring(0, result.indexOf("분"));
-                                            seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
-                                            countDown();}
+                                            if(!result.equals("[차고지출발]") || !result.equals("운행종료")) {
+                                                array = result.split("\\[");
+                                                minutes = array[0].substring(0, result.indexOf("분"));
+                                                seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
+                                                countDown(minutes, seconds);
+                                            }
                                         } catch (Exception e) {
                                             tv_arrvaltime.setText(result);
                                         }
-                                        if (result != "곧 도착") {
+                                        if (!result.equals("곧 도착")) {
                                             String result2 = array[1].substring(0, array[1].length() - 1);
                                             tv_arrivalbusstop.setText(result2);
                                         }
                                     }
-
-
-
-
 
                                 } catch (ExecutionException e) {
                                     e.printStackTrace();
@@ -150,7 +167,6 @@ public class SearchResultActivity extends AppCompatActivity {
         });
         timeChange.start();
 
-
         iv_backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,16 +175,41 @@ public class SearchResultActivity extends AppCompatActivity {
             }
         });
 
+        // 메인 스레드에서 DB 접근 불가 -> 읽고 쓸 때 스레드 사용
+        class InsertRunnable implements Runnable {
+            @Override
+            public void run() {
+                BookmarkEntity bookmarkEntity = new BookmarkEntity(stationName, ars_Id, busnumber, nextStation);
+                BookmarkDB.getInstance(getApplicationContext()).bookmarkDao().insert(bookmarkEntity);
+                Log.d("room 데이터 저장", stationName);
+            }
+        }
+
+        class DeleteRunnable implements Runnable {
+            @Override
+            public void run() {
+                BookmarkEntity bookmarkEntity = new BookmarkEntity(stationName, ars_Id, busnumber,nextStation);
+                BookmarkDB.getInstance(getApplicationContext()).bookmarkDao().deleteById(busnumber, ars_Id);
+                Log.d("room 데이터 삭제", stationName);
+            }
+        }
+
         ll_bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 i = 1 - i;
                 if (i == 0) {
+                    iv_star.setImageResource(R.drawable.star_filled);
+                    //북마크에 추가
+                    InsertRunnable insertRunnable = new InsertRunnable();
+                    Thread insert = new Thread(insertRunnable);
+                    insert.start();
+                } else {
                     iv_star.setImageResource(R.drawable.star_outlined);
                     //북마크에서 삭제
-                } else {
-                    iv_star.setImageResource(R.drawable.star_filled);
-                    //북마크 추가
+                    DeleteRunnable deleteRunnable = new DeleteRunnable();
+                    Thread delete = new Thread(deleteRunnable);
+                    delete.start();
                 }
             }
         });
@@ -215,7 +256,8 @@ public class SearchResultActivity extends AppCompatActivity {
 
 
     }
-    public void countDown() {
+
+    public void countDown(String minutes, String seconds) {
 
         long conversionTime = 0;
 

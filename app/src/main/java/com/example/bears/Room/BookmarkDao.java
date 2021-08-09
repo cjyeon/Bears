@@ -13,11 +13,14 @@ public interface BookmarkDao {
     @Query("SELECT * FROM bookmarkentity")
     LiveData<List<BookmarkEntity>> getAll();
 
-//    @Query("SELECT * FROM music WHERE id IN (:musicIds)")
-//    List<BookmarkEntity> loadAllByIds(int[] musicIds);
-
     @Insert
     void insert(BookmarkEntity bookmarkEntities);
+
+    @Query("SELECT COUNT(*) FROM bookmarkentity WHERE busNum = :busNum AND stationId = :stationId")
+    Integer getCountBookmark(String busNum, String stationId);
+
+    @Query("DELETE FROM bookmarkentity WHERE busNum = :busNum AND stationId = :stationId")
+    void deleteById(String busNum, String stationId);
 
     @Delete
     void delete(BookmarkEntity bookmarkEntity);
