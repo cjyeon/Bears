@@ -104,7 +104,9 @@ public class SearchResultActivity extends AppCompatActivity {
                 tv_arrivalbusstop.setText(result2);
             }
         }
-
+        stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
+                "serviceKey=" + BusStopServiceKey +
+                "&arsId=" + ars_Id;
         Thread timeChange = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -118,8 +120,8 @@ public class SearchResultActivity extends AppCompatActivity {
                                 try {
                                     StationByUidItem stationByUidItem = new StationByUidItem(stationByUidUrl, busnumber);
                                     stationByUidItem.execute();
-
                                     StationByResultMap = stationByUidItem.get();
+
                                     current_result = StationByResultMap.get("arrmsg1");
                                     vehId1 = StationByResultMap.get("vehId1");
                                     if (!current_result.equals(result)) {

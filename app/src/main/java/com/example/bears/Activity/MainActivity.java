@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
+        BusStopServiceKey = "%2Fvd166HaBUDR77oPC3OxbJw8A9HfCkD7s5zPirOIZZGsorMCJDXLwn4aM%2Bx2G3Qm2UZOuvp5zcTEFs5cgqM1Gg%3D%3D";
 
         stt = new STT(this);
         tts = new TTS(this);
@@ -144,58 +144,42 @@ public class MainActivity extends AppCompatActivity {
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    if (ars_Id != null) {
-                        if (tv_mainbus.getText().toString() != null) {
-                            busnumber = busnumber.replaceAll(" ", "");
-                            stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
-                                    "serviceKey=" + BusStopServiceKey +
-                                    "&arsId=" + ars_Id;
+                if (et_busstop.getText().toString().equals("")) {
+                    if (tv_mainbus.getText().toString().equals("")) {
+                        busnumber = busnumber.replaceAll(" ", "");
+                        stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
+                                "serviceKey=" + BusStopServiceKey +
+                                "&arsId=" + ars_Id;
+                        Log.d("테스트", busnumber);
+
+                        try {
+                            Log.d("테스트", ars_Id);
+
                             StationByUidItem stationByUidItem = new StationByUidItem(stationByUidUrl, busnumber);
                             stationByUidItem.execute();
-                            try {
-                                StationByResultMap = stationByUidItem.get();
-                                if (StationByResultMap != null) {
-                                    Log.d("~!~!~!~!~!", ars_Id);
+                            StationByResultMap = stationByUidItem.get();
+                            current_result = StationByResultMap.get("arrmsg1");
+                            vehId1 = StationByResultMap.get("vehId1");
+                            nextStation = StationByResultMap.get("nxtStn");
+                            Log.d("테스트", busnumber + current_result + vehId1 + nextStation);
 
-                                    current_result = StationByResultMap.get("arrmsg1");
-                                    vehId1 = StationByResultMap.get("vehId1");
-                                    nextStation = StationByResultMap.get("nxtStn");
-//                                if(!current_result.equals(result)) {
-//                                    result = current_result;
-//                                    Log.d("StationByUid 결과", "arrmsg1 : " + result);
-//                                    try {
-//                                        if(!result.equals("[차고지출발]")){
-//                                            array = result.split("\\[");
-//                                            minutes = array[0].substring(0, result.indexOf("분"));
-//                                            seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
-//                                            countDown(minutes,seconds);
-//                                        }
-//                                    } catch (Exception e) {
-//                                        tv_arrvaltime.setText(result);
-//                                    }
-//                                    if (result != "곧 도착") {
-//                                        String result2 = array[1].substring(0, array[1].length() - 1);
-//                                        tv_arrivalbusstop.setText(result2);
-//                                    }
-//                                }
-
-                                    Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
-                                    intent.putExtra("busnumber", busnumber);
-                                    intent.putExtra("ars_Id", ars_Id);
-                                    intent.putExtra("stationName", stationName);
-                                    intent.putExtra("arrmsg1", current_result);
-                                    intent.putExtra("vehId1", vehId1);
-                                    intent.putExtra("nextStation", nextStation);
-                                    startActivity(intent);
-                                }
-                            } catch (ExecutionException e) {
-                                e.printStackTrace();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        } else tts.speech("버스 번호를 입력해주세요.");
-                    } else tts.speech("정류장 번호를 입력해주세요.");
-                }
+                            Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
+                            intent.putExtra("busnumber", busnumber);
+                            intent.putExtra("ars_Id", ars_Id);
+                            intent.putExtra("stationName", stationName);
+                            intent.putExtra("arrmsg1", current_result);
+                            intent.putExtra("vehId1", vehId1);
+                            intent.putExtra("nextStation", nextStation);
+                            startActivity(intent);
+                            finish();
+                        } catch (ExecutionException | InterruptedException | NullPointerException e) {
+                            Log.d("테스트", "exception발생");
+                            tts.speech("버스의 도착 정보가 없습니다.");
+                            e.printStackTrace();
+                        }
+                    } else tts.speech("버스 번호를 입력해주세요.");
+                } else tts.speech("정류장 번호를 입력해주세요.");
+            }
         });
 
     }
