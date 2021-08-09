@@ -163,7 +163,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="25dp"
             android:background="@null"
-            android:hint="정류장 번호를 직접 입력하세요"
+            android:hint="정류장 번호를 입력하세요"
             android:textSize="16dp"
             style="@style/generalText"/>
 

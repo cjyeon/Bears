@@ -67,22 +67,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
 
-//        Handler handler = new Handler() {
-//            @SuppressLint("HandlerLeak")
-//            @Override
-//            public void handleMessage(@NonNull Message msg) {
-////                            super.handleMessage(msg);
-//                Log.d("핸들러 실행 후" , "stationName : " + stationName + " / "
-//                        +   "   stationId :    " + stationId + " / "
-//                        +   "   busNum :    " + busNum + " / "
-//                        +   "   nextStation :    " + nextStation);
-//                holder.stationName.setText(stationName);
-//                holder.stationId.setText(stationId);
-//                holder.tv_busnum.setText(busNum);
-//                holder.stationDirec.setText(nextStation + " 방면");
-//            }
-//        };
-
         class Timechange implements Runnable {
             @Override
             public void run() {
@@ -153,7 +137,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
         class SelectRunnable implements Runnable {
             @Override
             public void run() {
-//                for (i = 0; i < bookmarkEntities.size(); i++) {
                     stationName = bookmarkEntities.get(position).getStationName();
                     stationId = bookmarkEntities.get(position).getStationId();
                     busNum = bookmarkEntities.get(position).getBusNum();
@@ -163,22 +146,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                     holder.stationId.setText(stationId);
                     holder.tv_busnum.setText(busNum);
                     holder.stationDirec.setText(nextStation + " 방면");
-
-
-//                    Message msg = handler.obtainMessage();
-//                    handler.sendMessage(msg);
-
-//                    ((Activity)context).runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            holder.stationName.setText(stationName);
-//                            holder.stationId.setText(stationId);
-//                            holder.tv_busnum.setText(busNum);
-//                            holder.stationDirec.setText(nextStation + " 방면");
-//                        }
-//                    });
-
-//                }
             }
         }
 

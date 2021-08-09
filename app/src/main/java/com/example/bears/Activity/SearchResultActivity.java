@@ -47,10 +47,15 @@ public class SearchResultActivity extends AppCompatActivity {
         Intent intent = getIntent();
         busnumber = intent.getStringExtra("busnumber");
         ars_Id = intent.getStringExtra("ars_Id");
-        stationName = intent.getStringExtra("stationNm");
-        BusStopServiceKey = "%2Fvd166HaBUDR77oPC3OxbJw8A9HfCkD7s5zPirOIZZGsorMCJDXLwn4aM%2Bx2G3Qm2UZOuvp5zcTEFs5cgqM1Gg%3D%3D";
-        result =null;
+        stationName = intent.getStringExtra("stationName");
+        current_result = intent.getStringExtra("arrmsg1");
+        vehId1 = intent.getStringExtra("vehId1");
+        nextStation = intent.getStringExtra("nextStation");
 
+//        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
+        BusStopServiceKey = "%2Fvd166HaBUDR77oPC3OxbJw8A9HfCkD7s5zPirOIZZGsorMCJDXLwn4aM%2Bx2G3Qm2UZOuvp5zcTEFs5cgqM1Gg%3D%3D";
+
+        result = null;
         ll_bookmark = findViewById(R.id.ll_bookmark);
         ll_bell = findViewById(R.id.ll_bell);
         lv_bell = findViewById(R.id.iv_bell);
@@ -81,44 +86,24 @@ public class SearchResultActivity extends AppCompatActivity {
         Thread t = new Thread(selectRunnable);
         t.start();
 
-        if (ars_Id != null) {
-            if (busnumber != null) {
-                busnumber = busnumber.replaceAll(" ", "");
-                stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
-                        "serviceKey=" + BusStopServiceKey +
-                        "&arsId=" + ars_Id;
-                StationByUidItem stationByUidItem = new StationByUidItem(stationByUidUrl, busnumber);
-                stationByUidItem.execute();
-                try {
-                    StationByResultMap = stationByUidItem.get();
-                    current_result = StationByResultMap.get("arrmsg1");
-                    vehId1 = StationByResultMap.get("vehId1");
-                    nextStation = StationByResultMap.get("nxtStn");
-                    if(!current_result.equals(result)) {
-                        result = current_result;
-                        Log.d("StationByUid 결과", "arrmsg1 : " + result);
-                        try {
-                            if(!result.equals("[차고지출발]")){
-                                array = result.split("\\[");
-                                minutes = array[0].substring(0, result.indexOf("분"));
-                                seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
-                                countDown(minutes,seconds);
-                            }
-                        } catch (Exception e) {
-                            tv_arrvaltime.setText(result);
-                        }
-                        if (result != "곧 도착") {
-                            String result2 = array[1].substring(0, array[1].length() - 1);
-                            tv_arrivalbusstop.setText(result2);
-                        }
-                    }
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        if (!current_result.equals(result)) {
+            result = current_result;
+            Log.d("StationByUid 결과", "arrmsg1 : " + result);
+            try {
+                if (!result.equals("[차고지출발]") || !result.equals("운행종료")) {
+                    array = result.split("\\[");
+                    minutes = array[0].substring(0, result.indexOf("분"));
+                    seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
+                    countDown(minutes, seconds);
                 }
-            } else Log.d("arsId는 있음", ars_Id);
-        } else Log.d("arsId가 없음 ", "null 이라 안됨");
+            } catch (Exception e) {
+                tv_arrvaltime.setText(result);
+            }
+            if (result != "곧 도착") {
+                String result2 = array[1].substring(0, array[1].length() - 1);
+                tv_arrivalbusstop.setText(result2);
+            }
+        }
 
         Thread timeChange = new Thread(new Runnable() {
             @Override
@@ -137,11 +122,11 @@ public class SearchResultActivity extends AppCompatActivity {
                                     StationByResultMap = stationByUidItem.get();
                                     current_result = StationByResultMap.get("arrmsg1");
                                     vehId1 = StationByResultMap.get("vehId1");
-                                    if(!current_result.equals(result)) {
+                                    if (!current_result.equals(result)) {
                                         result = current_result;
                                         Log.d("StationByUid 결과", "arrmsg1 : " + result);
                                         try {
-                                            if(!result.equals("[차고지출발]") || !result.equals("운행종료")) {
+                                            if (!result.equals("[차고지출발]") || !result.equals("운행종료")) {
                                                 array = result.split("\\[");
                                                 minutes = array[0].substring(0, result.indexOf("분"));
                                                 seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
@@ -192,7 +177,7 @@ public class SearchResultActivity extends AppCompatActivity {
         class DeleteRunnable implements Runnable {
             @Override
             public void run() {
-                BookmarkEntity bookmarkEntity = new BookmarkEntity(stationName, ars_Id, busnumber,nextStation);
+                BookmarkEntity bookmarkEntity = new BookmarkEntity(stationName, ars_Id, busnumber, nextStation);
                 BookmarkDB.getInstance(getApplicationContext()).bookmarkDao().deleteById(busnumber, ars_Id);
                 Log.d("room 데이터 삭제", stationName);
             }
@@ -223,7 +208,7 @@ public class SearchResultActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // 버스기사에게 알림
                 retrofitService = RetrofitBuilder.getRetrofit().create(RetrofitService.class);
-                Call<LoginModel> call = retrofitService.NoticeBusStop(busnumber,ars_Id,vehId1);
+                Call<LoginModel> call = retrofitService.NoticeBusStop(busnumber, ars_Id, vehId1);
                 call.enqueue(new Callback<LoginModel>() {
                     @Override
                     public void onResponse(Call<LoginModel> call, Response<LoginModel> response) {
@@ -302,7 +287,7 @@ public class SearchResultActivity extends AppCompatActivity {
 //                    min = "0" + min;
 //                }
 
-                tv_arrvaltime.setText(min+"분 "+second+"초");
+                tv_arrvaltime.setText(min + "분 " + second + "초");
 //                count_view.setText(hour + ":" + min + ":" + second);
             }
 
