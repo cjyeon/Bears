@@ -28,13 +28,14 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
 
     @Override
     protected HashMap<String, String> doInBackground(Void... params) {
-        HashMap<String, String> resultMap = new HashMap<String, String>();
+        HashMap<String, String> resultMap = new HashMap<>();
         String rtNm = null;
         String arrmsg1 = null;
         String arrmsg2 = null;
         String vehId1 = null;
         String nxtStn = null;
         // parsing할 url 지정(API 키 포함해서)
+
         DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = null;
         try {
@@ -47,7 +48,6 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
             doc = dBuilder.parse(url);
         } catch (IOException | SAXException e) {
             e.printStackTrace();
-//            Log.d("skgal;sjdjglwkjklmdkla;","오류오류오류오류");
         }
 
         // root tag
@@ -59,15 +59,15 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
 
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node nNode = nList.item(temp);
+
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element eElement = (Element) nNode;
                 rtNm = getTagValue("rtNm", eElement);
-                if (rtNm == null) {
+                if(rtNm == null){
                     Log.d("에이피아이 널값문제", "rtNm : 널이다");
                 }
-                if (rtNm.equals(busnumber)) {
-
-                    vehId1 = getTagValue("busRouteId", eElement);
+                if(rtNm.equals(busnumber)){
+                    vehId1 = getTagValue("busRouteId",eElement);
                     arrmsg1 = getTagValue("arrmsg1", eElement);
                     arrmsg2 = getTagValue("arrmsg2", eElement);
                     nxtStn = getTagValue("nxtStn", eElement);
@@ -80,7 +80,6 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
                 }
             }
         }
-
         return null;
     }
 

@@ -30,12 +30,12 @@ import retrofit2.Response;
 
 public class SearchResultActivity extends AppCompatActivity {
     LinearLayout ll_bookmark, ll_bell;
-    ImageView iv_backbtn, iv_star,lv_bell;
-    TextView tv_busnum, tv_arrvaltime, tv_arrivalbusstop, tv_curBusStop;
+    ImageView iv_backbtn, iv_star, lv_bell;
+    TextView tv_busnum, tv_arrivaltime, tv_arrivalbusstop, tv_curBusStop;
     static String busnumber, ars_Id, stationName, result, vehId1, nextStation;
     String stationByUidUrl, BusStopServiceKey, seconds, minutes, current_result;
     public HashMap<String, String> StationByResultMap;
-    String [] array;
+    String[] array;
     RetrofitService retrofitService;
     int i;
 
@@ -50,10 +50,11 @@ public class SearchResultActivity extends AppCompatActivity {
         stationName = intent.getStringExtra("stationName");
         current_result = intent.getStringExtra("arrmsg1");
         vehId1 = intent.getStringExtra("vehId1");
+        System.out.println("넘어오는 도착예정 버스 아이디 : " + vehId1);
         nextStation = intent.getStringExtra("nextStation");
 
 //        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
-        BusStopServiceKey = "%2Fvd166HaBUDR77oPC3OxbJw8A9HfCkD7s5zPirOIZZGsorMCJDXLwn4aM%2Bx2G3Qm2UZOuvp5zcTEFs5cgqM1Gg%3D%3D";
+        BusStopServiceKey = "NtPpXt9U%2BkMh6dPR%2BuvLfBjuxXay8256MUBN6FBG093IVeVIPg6wQeb3aLBJsrzE3KAQ5%2BaTJGz9xEqbLPl%2BWQ%3D%3D";
 
         result = null;
         ll_bookmark = findViewById(R.id.ll_bookmark);
@@ -62,7 +63,7 @@ public class SearchResultActivity extends AppCompatActivity {
         iv_backbtn = findViewById(R.id.iv_backbtn);
         iv_star = findViewById(R.id.iv_star);
         tv_busnum = findViewById(R.id.tv_searchbusnum);
-        tv_arrvaltime = findViewById(R.id.tv_arrivaltime);
+        tv_arrivaltime = findViewById(R.id.tv_arrivaltime);
         tv_arrivalbusstop = findViewById(R.id.tv_arrivalbusstop);
         tv_curBusStop = findViewById(R.id.tv_curBusStop);
 
@@ -86,63 +87,50 @@ public class SearchResultActivity extends AppCompatActivity {
         Thread t = new Thread(selectRunnable);
         t.start();
 
-        if (!current_result.equals(result)) {
-            result = current_result;
-            Log.d("StationByUid 결과", "arrmsg1 : " + result);
-            try {
-                if (!result.equals("[차고지출발]") || !result.equals("운행종료")) {
-                    array = result.split("\\[");
-                    minutes = array[0].substring(0, result.indexOf("분"));
-                    seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
-                    countDown(minutes, seconds);
-                }
-            } catch (Exception e) {
-                tv_arrvaltime.setText(result);
-            }
-            if (result != "곧 도착") {
-                String result2 = array[1].substring(0, array[1].length() - 1);
-                tv_arrivalbusstop.setText(result2);
-            }
-        }
-        stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
-                "serviceKey=" + BusStopServiceKey +
-                "&arsId=" + ars_Id;
         Thread timeChange = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (!Thread.interrupted())
                     try {
-                        Thread.sleep(5000);
                         runOnUiThread(new Runnable() // start actions in UI thread
                         {
                             @Override
                             public void run() {
                                 try {
+                                    stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
+                                            "serviceKey=" + BusStopServiceKey +
+                                            "&arsId=" + ars_Id;
+
                                     StationByUidItem stationByUidItem = new StationByUidItem(stationByUidUrl, busnumber);
                                     stationByUidItem.execute();
-                                    StationByResultMap = stationByUidItem.get();
 
+                                    StationByResultMap = stationByUidItem.get();
                                     current_result = StationByResultMap.get("arrmsg1");
                                     vehId1 = StationByResultMap.get("vehId1");
+
                                     if (!current_result.equals(result)) {
                                         result = current_result;
                                         Log.d("StationByUid 결과", "arrmsg1 : " + result);
-                                        try {
-                                            if (!result.equals("[차고지출발]") || !result.equals("운행종료")) {
-                                                array = result.split("\\[");
-                                                minutes = array[0].substring(0, result.indexOf("분"));
+                                        if (result.equals("[차고지출발]")) {
+                                            result = result.replaceAll("\\[", "").replaceAll("\\]", "");
+                                            tv_arrivaltime.setText(result);
+                                            tv_arrivalbusstop.setText("");
+                                        } else if (result.equals("곧 도착") || result.equals("운행종료")) {
+                                            tv_arrivaltime.setText(result);
+                                            tv_arrivalbusstop.setText("");
+                                        } else {
+                                            array = result.split("\\[");
+                                            minutes = array[0].substring(0, result.indexOf("분"));
+
+                                            if (result.contains("초"))
                                                 seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
-                                                countDown(minutes, seconds);
-                                            }
-                                        } catch (Exception e) {
-                                            tv_arrvaltime.setText(result);
-                                        }
-                                        if (!result.equals("곧 도착")) {
-                                            String result2 = array[1].substring(0, array[1].length() - 1);
-                                            tv_arrivalbusstop.setText(result2);
+                                            else
+                                                seconds = "0";
+
+                                            tv_arrivalbusstop.setText(array[1].substring(0, array[1].length() - 1));
+                                            countDown(minutes, seconds);
                                         }
                                     }
-
                                 } catch (ExecutionException e) {
                                     e.printStackTrace();
                                 } catch (InterruptedException e) {
@@ -150,6 +138,7 @@ public class SearchResultActivity extends AppCompatActivity {
                                 }
                             }
                         });
+                        Thread.sleep(10000);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         // ooops
@@ -161,7 +150,7 @@ public class SearchResultActivity extends AppCompatActivity {
         iv_backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                timeChange.interrupt();
+
                 finish();
             }
         });
@@ -244,8 +233,6 @@ public class SearchResultActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
 
     public void countDown(String minutes, String seconds) {
@@ -289,7 +276,7 @@ public class SearchResultActivity extends AppCompatActivity {
 //                    min = "0" + min;
 //                }
 
-                tv_arrvaltime.setText(min + "분 " + second + "초");
+                tv_arrivaltime.setText(min + "분 " + second + "초 후 도착 예정");
 //                count_view.setText(hour + ":" + min + ":" + second);
             }
 
@@ -297,7 +284,7 @@ public class SearchResultActivity extends AppCompatActivity {
             public void onFinish() {
 
                 // 변경 후
-//                count_view.setText("촬영종료!");
+//                tv_arrivaltime.setText("");
 
                 // TODO : 타이머가 모두 종료될때 어떤 이벤트를 진행할지
 

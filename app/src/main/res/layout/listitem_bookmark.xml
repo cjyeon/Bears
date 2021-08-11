@@ -71,39 +71,39 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="6427" />
 
-    <LinearLayout
-        android:id="@+id/ll_busarrival"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginRight="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/iv_star"
-        app:layout_constraintTop_toTopOf="parent">
+        <LinearLayout
+            android:id="@+id/ll_busarrival"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_star"
+            app:layout_constraintEnd_toStartOf="@+id/iv_star"
+            app:layout_constraintTop_toTopOf="@+id/iv_star">
 
-        <TextView
-            android:id="@+id/tv_arrivaltime"
-            style="@style/generalText"
-            android:textSize="14dp"
-            tools:text="6분 57초 후 도착 예정" />
+            <TextView
+                android:id="@+id/tv_arrivaltime"
+                style="@style/generalText"
+                android:textSize="15dp"
+                tools:text="16분 57초 후 도착" />
 
-        <TextView
-            android:id="@+id/tv_arrivalbusstop"
-            style="@style/generalText"
-            android:layout_marginTop="7dp"
-            android:textSize="14dp"
-            tools:text="6정거장 전" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tv_arrivalbusstop"
+                style="@style/generalText"
+                android:layout_marginTop="7dp"
+                android:textSize="15dp"
+                tools:text="6정거장 전" />
+        </LinearLayout>
 
-    <ImageView
-        android:id="@+id/iv_star"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginRight="25dp"
-        android:src="@drawable/star_filled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/iv_star"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="25dp"
+            android:src="@drawable/star_filled"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

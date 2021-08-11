@@ -3,6 +3,7 @@ package com.example.bears;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,6 +20,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bears.Activity.BookmarkActivity;
+import com.example.bears.Activity.MainActivity;
+import com.example.bears.Activity.SearchResultActivity;
 import com.example.bears.Room.BookmarkDB;
 import com.example.bears.Room.BookmarkDao;
 import com.example.bears.Room.BookmarkEntity;
@@ -37,9 +40,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
     private BookmarkDB bookmarkDB;
     String stationByUidUrl, BusStopServiceKey, busNum, stationId, stationName, nextStation, result, current_result, vehId1, seconds, minutes;
     public HashMap<String, String> StationByResultMap;
-    String [] array;
-
-    int i = 0;
+    String[] array;
+    ArrayList<String> arr_vehId1 = new ArrayList<>();
+    ArrayList<String> arr_arrmsg1 = new ArrayList<>();
 
     public BookmarkAdapter(BookmarkDB bookmarkDB, Context context) {
         this.bookmarkDB = bookmarkDB;
@@ -51,7 +54,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
         return bookmarkEntities.size();
     }
 
-    public static List<BookmarkEntity> getItems() {return bookmarkEntities;}
+    public static List<BookmarkEntity> getItems() {
+        return bookmarkEntities;
+    }
 
     @NonNull
     @Override
@@ -65,58 +70,68 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
+//        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
+        BusStopServiceKey = "NtPpXt9U%2BkMh6dPR%2BuvLfBjuxXay8256MUBN6FBG093IVeVIPg6wQeb3aLBJsrzE3KAQ5%2BaTJGz9xEqbLPl%2BWQ%3D%3D";
 
         class Timechange implements Runnable {
             @Override
             public void run() {
                 while (!Thread.interrupted())
                     try {
-                        Thread.sleep(5000);
-                        ((Activity)context).runOnUiThread(new Runnable() // start actions in UI thread
+                        ((Activity) context).runOnUiThread(new Runnable() // start actions in UI thread
                         {
                             @Override
                             public void run() {
                                 try {
-                                    for (i = 0; i < bookmarkEntities.size(); i++) {
-                                        stationName = bookmarkEntities.get(position).getStationName();
-                                        stationId = bookmarkEntities.get(position).getStationId();
-                                        busNum = bookmarkEntities.get(position).getBusNum();
+                                    array = null;
+                                    stationName = bookmarkEntities.get(position).getStationName();
+                                    stationId = bookmarkEntities.get(position).getStationId();
+                                    busNum = bookmarkEntities.get(position).getBusNum();
 
-                                        stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
-                                                "serviceKey=" + BusStopServiceKey +
-                                                "&arsId=" + stationId;
+                                    System.out.println("타임체인지 실행" + busNum);
 
-                                        StationByUidItem stationByUidItem = new StationByUidItem(stationByUidUrl, busNum);
-                                        stationByUidItem.execute();
+                                    stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
+                                            "serviceKey=" + BusStopServiceKey +
+                                            "&arsId=" + stationId;
 
-                                        StationByResultMap = stationByUidItem.get();
+                                    StationByUidItem stationByUidItem = new StationByUidItem(stationByUidUrl, busNum);
+                                    stationByUidItem.execute();
 
-                                        try {
-                                            current_result = StationByResultMap.get("arrmsg1");
-                                        } catch (NullPointerException e) {
-                                            Log.d("api 도착시간 널값", "arrmsg1 : " + result);
-                                        }
+                                    StationByResultMap = stationByUidItem.get();
 
+                                    try {
+                                        current_result = StationByResultMap.get("arrmsg1");
                                         vehId1 = StationByResultMap.get("vehId1");
 
-                                        if (!current_result.equals(result)) {
-                                            result = current_result;
-                                            Log.d("StationByUid 결과", "arrmsg1 : " + result);
-                                            try {
-                                                if (!result.equals("[차고지출발]") || !result.equals("운행종료")) {
-                                                    array = result.split("\\[");
-                                                    minutes = array[0].substring(0, result.indexOf("분"));
-                                                    seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
-                                                    countDown(minutes, seconds, holder);
-                                                }
-                                            } catch (Exception e) {
-                                                holder.tv_arrivaltime.setText(result);
-                                            }
-                                            if (!result.equals("곧 도착")) {
-                                                String result2 = array[1].substring(0, array[1].length() - 1);
-                                                holder.tv_arrivalbusstop.setText(result2);
-                                            }
+                                        arr_arrmsg1.add(current_result);
+                                        arr_vehId1.add(vehId1);
+                                    } catch (NullPointerException e) {
+                                        Log.d("api 도착시간 널값", "arrmsg1 : " + result);
+                                    }
+
+                                    arr_arrmsg1.set(position, current_result);
+
+                                    if (!current_result.equals(result)) {
+                                        result = current_result;
+                                        Log.d("StationByUid 결과", "arrmsg1 : " + result);
+                                        if (result.equals("[차고지출발]")) {
+                                            result = result.replaceAll("\\[", "").replaceAll("\\]", "");
+                                            holder.tv_arrivaltime.setText(result);
+                                            holder.tv_arrivalbusstop.setText("");
+                                        } else if (result.equals("곧 도착") || result.equals("운행종료")) {
+                                            holder.tv_arrivaltime.setText(result);
+                                            holder.tv_arrivalbusstop.setText("");
+                                        } else {
+                                            array = result.split("\\[");
+                                            minutes = array[0].substring(0, result.indexOf("분"));
+
+                                            if (result.contains("초"))
+                                                seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
+                                            else
+                                                seconds ="0";
+
+                                            holder.tv_arrivalbusstop.setText(array[1].substring(0, array[1].length() - 1));
+                                            countDown(minutes, seconds, holder);
                                         }
                                     }
                                 } catch (ExecutionException e) {
@@ -126,17 +141,20 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                                 }
                             }
                         });
+                        Thread.sleep(10000);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         // ooops
                     }
             }
-        };
+        }
+        ;
 
         // 메인 스레드에서 DB 접근 불가 -> 읽고 쓸 때 스레드 사용
         class SelectRunnable implements Runnable {
             @Override
             public void run() {
+                for (int i = 0; i < bookmarkEntities.size(); i++) {
                     stationName = bookmarkEntities.get(position).getStationName();
                     stationId = bookmarkEntities.get(position).getStationId();
                     busNum = bookmarkEntities.get(position).getBusNum();
@@ -146,25 +164,20 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                     holder.stationId.setText(stationId);
                     holder.tv_busnum.setText(busNum);
                     holder.stationDirec.setText(nextStation + " 방면");
+                }
             }
         }
 
-        for (i = 0; i < bookmarkEntities.size(); i++) {
-            SelectRunnable selectRunnable = new SelectRunnable();
-            Thread t = new Thread(selectRunnable);
-            t.start();
+        SelectRunnable selectRunnable = new SelectRunnable();
+        Thread t = new Thread(selectRunnable);
+        t.start();
 
-            Timechange timechange = new Timechange();
-            Thread tt = new Thread(timechange);
-            tt.start();
-        }
-
-//        holder.tv_arrivaltime.setText(bookmarkData.get(position).getArrival_time());
-//        holder.tv_arrivalbusstop.setText(bookmarkData.get(position).getArrival_busstop());
-
+        Timechange timechange = new Timechange();
+        Thread tt = new Thread(timechange);
+        tt.start();
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView stationName, stationId, stationDirec;
         private TextView tv_busnum, tv_arrivaltime, tv_arrivalbusstop;
         private ImageView iv_star;
@@ -182,6 +195,22 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
             tv_arrivalbusstop = itemView.findViewById(R.id.tv_arrivalbusstop);
             iv_star = itemView.findViewById(R.id.iv_star);
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    Intent intent = new Intent(v.getContext(), SearchResultActivity.class);
+
+                    intent.putExtra("busnumber", bookmarkEntities.get(position).getBusNum());
+                    intent.putExtra("ars_Id", bookmarkEntities.get(position).getStationId());
+                    intent.putExtra("stationName", bookmarkEntities.get(position).getStationName());
+                    intent.putExtra("arrmsg1", arr_arrmsg1.get(position));
+                    intent.putExtra("vehId1", arr_vehId1.get(position));
+                    intent.putExtra("nextStation", bookmarkEntities.get(position).getNextStation());
+                    v.getContext().startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                }
+            });
+
             iv_star.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -196,8 +225,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                                 BookmarkDB.getInstance(itemView.getContext()).bookmarkDao().insert((BookmarkEntity) getItems().get(position));
                             }
                         }).start();
-                    }
-                    else{
+                    } else {
                         iv_star.setImageResource(R.drawable.star_outlined);
                         //북마크데이터에서 삭제
                         new Thread(new Runnable() {
@@ -236,8 +264,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                 // 초단위
                 String second = String.valueOf((getMin % (60 * 1000)) / 1000); // 나머지
 
-                holder.tv_arrivaltime.setText(min+"분 "+second+"초");
-//                count_view.setText(hour + ":" + min + ":" + second);
+                holder.tv_arrivaltime.setText(min + "분 " + second + "초 후 도착");
             }
 
             // 제한시간 종료시

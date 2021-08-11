@@ -60,7 +60,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BusStopServiceKey = "%2Fvd166HaBUDR77oPC3OxbJw8A9HfCkD7s5zPirOIZZGsorMCJDXLwn4aM%2Bx2G3Qm2UZOuvp5zcTEFs5cgqM1Gg%3D%3D";
+        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
+//        BusStopServiceKey = "%2Fvd166HaBUDR77oPC3OxbJw8A9HfCkD7s5zPirOIZZGsorMCJDXLwn4aM%2Bx2G3Qm2UZOuvp5zcTEFs5cgqM1Gg%3D%3D";
+//        BusStopServiceKey = "NtPpXt9U%2BkMh6dPR%2BuvLfBjuxXay8256MUBN6FBG093IVeVIPg6wQeb3aLBJsrzE3KAQ5%2BaTJGz9xEqbLPl%2BWQ%3D%3D";
 
         stt = new STT(this);
         tts = new TTS(this);
@@ -144,8 +146,8 @@ public class MainActivity extends AppCompatActivity {
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (et_busstop.getText().toString().equals("")) {
-                    if (tv_mainbus.getText().toString().equals("")) {
+                if (!et_busstop.getText().toString().equals("")) {
+                    if (!tv_mainbus.getText().toString().equals("")) {
                         busnumber = busnumber.replaceAll(" ", "");
                         stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
                                 "serviceKey=" + BusStopServiceKey +
@@ -181,7 +183,6 @@ public class MainActivity extends AppCompatActivity {
                 } else tts.speech("정류장 번호를 입력해주세요.");
             }
         });
-
     }
 
     PermissionListener permissionlistener = new PermissionListener() {

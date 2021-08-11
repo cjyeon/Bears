@@ -19,7 +19,7 @@ import java.util.List;
 
 
 public class BookmarkActivity extends AppCompatActivity {
-    ImageView iv_backbtn;
+    static ImageView iv_backbtn;
     RecyclerView rv_bookmark;
     BookmarkAdapter bookmarkAdapter;
 
@@ -38,6 +38,7 @@ public class BookmarkActivity extends AppCompatActivity {
         iv_backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Thread.interrupted();
                 finish();
             }
         });
