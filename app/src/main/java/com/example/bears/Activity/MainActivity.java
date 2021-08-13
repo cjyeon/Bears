@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
     static TextView tv_mainbus;
     static EditText et_busstop;
     Button btn_search;
-    static String tmX, tmY, BusStopUrl, stationByUidUrl, BusStopServiceKey, ars_Id;
-    static String busnumber, stationNm;
+    static String tmX, tmY, BusStopUrl, BusStopServiceKey, ars_Id, stationByUidUrl;
+    static String busnumber, stationName, current_result, vehId1, nextStation;
     int pressedTime = 0;
     final int PERMISSION = 1;
     private FusedLocationProviderClient fusedLocationClient;
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     STT stt;
     TTS tts;
     public HashMap<String, String> BusStopResultMap;
+    public HashMap<String, String> StationByResultMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
+//        BusStopServiceKey = "%2Fvd166HaBUDR77oPC3OxbJw8A9HfCkD7s5zPirOIZZGsorMCJDXLwn4aM%2Bx2G3Qm2UZOuvp5zcTEFs5cgqM1Gg%3D%3D";
+//        BusStopServiceKey = "NtPpXt9U%2BkMh6dPR%2BuvLfBjuxXay8256MUBN6FBG093IVeVIPg6wQeb3aLBJsrzE3KAQ5%2BaTJGz9xEqbLPl%2BWQ%3D%3D";
 
         stt = new STT(this);
         tts = new TTS(this);
@@ -77,17 +80,19 @@ public class MainActivity extends AppCompatActivity {
         //권한체크
         TedPermission.with(this)
                 .setPermissionListener(permissionlistener)
-                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setDeniedMessage("필요한 권한을 허용해주세요.\n\n어플 설정에서 권한 허용 필수")
                 .setPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET, Manifest.permission.RECORD_AUDIO})
                 .check();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         performAction();
 
-
         ll_voice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tv_mainbus.setText("");
+                et_busstop.setText("");
+
                 tts.speech("음성인식을 시작합니다.");
                 try {
                     Thread.sleep(2000);
@@ -109,8 +114,8 @@ public class MainActivity extends AppCompatActivity {
                     busStop.execute();
                     BusStopResultMap = busStop.get();
                     ars_Id = Objects.requireNonNull(BusStopResultMap.get("arsId"));
-                    stationNm = Objects.requireNonNull(BusStopResultMap.get("stationNm"));
-                    Log.d("정류장 이름", stationNm);
+                    stationName = Objects.requireNonNull(BusStopResultMap.get("stationNm"));
+                    Log.d("정류장 이름", stationName);
                     Log.d("arsId 결과", ars_Id);
 
 
@@ -118,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                     Log.e("실패이유", "PerformAction", e.getCause());
                 }
-
 
             }
         });
@@ -138,17 +142,47 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
-                intent.putExtra("busnumber",busnumber);
-                intent.putExtra("ars_Id",ars_Id);
-                intent.putExtra("stationNm", stationNm);
-                startActivity(intent);
+                if (!et_busstop.getText().toString().equals("")) {
+                    if (!tv_mainbus.getText().toString().equals("")) {
+                        busnumber = busnumber.replaceAll(" ", "");
+                        stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
+                                "serviceKey=" + BusStopServiceKey +
+                                "&arsId=" + ars_Id;
+                        Log.d("테스트", busnumber);
+
+                        try {
+                            Log.d("테스트", ars_Id);
+
+                            StationByUidItem stationByUidItem = new StationByUidItem(stationByUidUrl, busnumber);
+                            stationByUidItem.execute();
+                            StationByResultMap = stationByUidItem.get();
+                            current_result = StationByResultMap.get("arrmsg1");
+                            vehId1 = StationByResultMap.get("vehId1");
+                            nextStation = StationByResultMap.get("nxtStn");
+                            Log.d("테스트", busnumber + current_result + vehId1 + nextStation);
+
+                            Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
+                            intent.putExtra("busnumber", busnumber);
+                            intent.putExtra("ars_Id", ars_Id);
+                            intent.putExtra("stationName", stationName);
+                            intent.putExtra("arrmsg1", current_result);
+                            intent.putExtra("vehId1", vehId1);
+                            intent.putExtra("nextStation", nextStation);
+                            startActivity(intent);
+
+                        } catch (ExecutionException | InterruptedException | NullPointerException e) {
+                            Log.d("테스트", "exception발생");
+                            tts.speech("버스의 도착 정보가 없습니다.");
+                            e.printStackTrace();
+                        }
+                    } else tts.speech("버스 번호를 입력해주세요.");
+                } else tts.speech("정류장 번호를 입력해주세요.");
             }
         });
-
     }
 
     PermissionListener permissionlistener = new PermissionListener() {
@@ -213,10 +247,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        tv_mainbus.setText("");
+        et_busstop.setText("");
+
         Intent intent2 = getIntent();
         busnumber = intent2.getStringExtra("busnumber");
         tv_mainbus.setText(busnumber);
-        if (stationNm != null) et_busstop.setText(stationNm);
+        if (stationName != null) et_busstop.setText(stationName);
         else Log.d("stationNum", "널값");
 
 //        if (ars_Id != null) {

@@ -10,7 +10,7 @@ public class RetrofitBuilder {
     public static Retrofit getRetrofit(){
         if(retrofit == null){
             retrofit = new Retrofit.Builder()
-                    .baseUrl(Common.BASE_SERVER_URL)
+                    .baseUrl("http://ec2-3-36-159-238.ap-northeast-2.compute.amazonaws.com:3000")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

@@ -5,22 +5,27 @@ import android.view.View;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bears.BookmarkAdapter;
-import com.example.bears.BookmarkData;
 import com.example.bears.R;
-import com.example.bears.RecyclerDecoration;
+import com.example.bears.Room.BookmarkDB;
+import com.example.bears.Room.BookmarkDao;
+import com.example.bears.Room.BookmarkEntity;
 
-import java.util.ArrayList;
+import java.util.List;
+
 
 public class BookmarkActivity extends AppCompatActivity {
-    ImageView iv_backbtn;
+    static ImageView iv_backbtn;
     RecyclerView rv_bookmark;
-    ArrayList<BookmarkData> bookmarkData;
     BookmarkAdapter bookmarkAdapter;
-    LinearLayoutManager linearLayoutManager;
+
+    private BookmarkDB bookmarkDB;
+
+    int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,26 +35,29 @@ public class BookmarkActivity extends AppCompatActivity {
         iv_backbtn = findViewById(R.id.iv_backbtn);
         rv_bookmark = findViewById(R.id.rv_bookmark);
 
-        RecyclerDecoration decoration_height = new RecyclerDecoration(20);
-        rv_bookmark.addItemDecoration(decoration_height);
-
         iv_backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Thread.interrupted();
                 finish();
             }
         });
 
-        bookmarkData = new ArrayList<>();
+        bookmarkDB = BookmarkDB.getInstance(this);
+        rv_bookmark.setHasFixedSize(true);
 
-        linearLayoutManager = new LinearLayoutManager(this);
-        rv_bookmark.setLayoutManager(linearLayoutManager);
-        bookmarkAdapter = new BookmarkAdapter(bookmarkData);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        rv_bookmark.setLayoutManager(layoutManager);
+        bookmarkAdapter = new BookmarkAdapter(bookmarkDB, this);
         rv_bookmark.setAdapter(bookmarkAdapter);
 
-        //test
-        bookmarkData.add(new BookmarkData("88", "11분 30후 도착 예정", "3" + "정거장 전", true));
-        bookmarkData.add(new BookmarkData("81-1", "15분 후 도착 예정", "4" + "정거장 전", true));
+        //UI 갱신 (라이브데이터 Observer 이용, 해당 디비값이 변화가생기면 실행됨)
+        bookmarkDB.bookmarkDao().getAll().observe(this, new Observer<List<BookmarkEntity>>() {
+            @Override
+            public void onChanged(List<BookmarkEntity> data) {
+                bookmarkAdapter.setItem(data);
+            }
+        });
 
     }
 }

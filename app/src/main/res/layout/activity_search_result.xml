@@ -41,7 +41,7 @@
         android:id="@+id/constraintLayout2"
         android:layout_width="338dp"
         android:layout_height="128dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="45dp"
         android:background="@drawable/search_result_border"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.506"
@@ -52,12 +52,12 @@
             android:id="@+id/tv_searchbusnum"
             style="@style/boldText"
             android:layout_marginLeft="24dp"
-            android:text="6427"
             android:textColor="@color/colorBlack"
             android:textSize="36dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="영등포 03" />
 
         <LinearLayout
             android:id="@+id/ll_bookmark"
@@ -93,7 +93,8 @@
         android:textSize="17dp"
         app:layout_constraintEnd_toEndOf="@+id/constraintLayout2"
         app:layout_constraintStart_toStartOf="@+id/constraintLayout2"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+        tools:text="곧 도착" />
 
     <TextView
         android:id="@+id/tv_arrivalbusstop"
@@ -103,13 +104,14 @@
         android:textSize="17dp"
         app:layout_constraintEnd_toEndOf="@+id/tv_arrivaltime"
         app:layout_constraintStart_toStartOf="@+id/tv_arrivaltime"
-        app:layout_constraintTop_toBottomOf="@+id/tv_arrivaltime" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_arrivaltime"
+        tools:text="1정거장 전" />
 
     <LinearLayout
         android:id="@+id/ll_bell"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="80dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="@+id/tv_arrivalbusstop"
         app:layout_constraintStart_toStartOf="@+id/tv_arrivalbusstop"
@@ -129,5 +131,40 @@
             android:text="기사에게 알림보내기"
             android:textSize="14dp" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_curBusStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:textSize="14dp"
+        style="@style/generalText"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        tools:text="당산역" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintStart_toStartOf="@+id/constraintLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintVertical_bias="0.615"
+        app:srcCompat="@drawable/location" />
+
+    <Button
+        android:id="@+id/btn_beacon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="진동알림설정"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_bell"
+        tools:text="진동알림취소" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
