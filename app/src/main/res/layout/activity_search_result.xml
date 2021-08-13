@@ -111,7 +111,7 @@
         android:id="@+id/ll_bell"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="80dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="@+id/tv_arrivalbusstop"
         app:layout_constraintStart_toStartOf="@+id/tv_arrivalbusstop"
@@ -154,5 +154,17 @@
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
         app:layout_constraintVertical_bias="0.615"
         app:srcCompat="@drawable/location" />
+
+    <Button
+        android:id="@+id/btn_beacon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="진동알림설정"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_bell"
+        tools:text="진동알림취소" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

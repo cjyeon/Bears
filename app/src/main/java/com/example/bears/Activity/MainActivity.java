@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         //권한체크
         TedPermission.with(this)
                 .setPermissionListener(permissionlistener)
-                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setDeniedMessage("필요한 권한을 허용해주세요.\n\n어플 설정에서 권한 허용 필수")
                 .setPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET, Manifest.permission.RECORD_AUDIO})
                 .check();
 
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("vehId1", vehId1);
                             intent.putExtra("nextStation", nextStation);
                             startActivity(intent);
-                            finish();
+
                         } catch (ExecutionException | InterruptedException | NullPointerException e) {
                             Log.d("테스트", "exception발생");
                             tts.speech("버스의 도착 정보가 없습니다.");

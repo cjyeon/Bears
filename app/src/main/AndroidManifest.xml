@@ -4,7 +4,12 @@
     package="com.example.bears">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
@@ -21,7 +26,9 @@
 
         <activity android:name=".Activity.DriverActivity" />
         <activity android:name=".Activity.BookmarkActivity" />
-        <activity android:name=".Activity.SearchResultActivity" />
+        <activity android:name=".Activity.SearchResultActivity"/>
+
+
         <activity android:name=".Activity.LoginActivity" />
         <activity android:name=".Activity.MainActivity">
             <intent-filter>

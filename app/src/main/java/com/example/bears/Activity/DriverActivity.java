@@ -61,6 +61,7 @@ public class DriverActivity extends AppCompatActivity {
                 finish();
             }
         });
+
         init();
 
         driverData = new ArrayList<>();
