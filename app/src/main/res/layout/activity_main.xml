@@ -82,11 +82,25 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/anim_stt"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:lottie_autoPlay="false"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/anim_stt"
+        android:visibility="invisible"/>
+
+
     <LinearLayout
         android:id="@+id/ll_voice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="77dp"
+        android:layout_marginTop="75dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -165,7 +179,8 @@
             android:background="@null"
             android:hint="정류장 번호를 입력하세요"
             android:textSize="16dp"
-            style="@style/generalText"/>
+            style="@style/generalText"
+            android:imeOptions="actionDone"/>
 
 
     </LinearLayout>

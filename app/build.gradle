@@ -48,4 +48,7 @@ dependencies {
 
     //noinspection GradleDynamicVersion
     implementation 'org.altbeacon:android-beacon-library:2+'
+
+    //Lottie Animation
+    implementation 'com.airbnb.android:lottie:3.0.7'
 }

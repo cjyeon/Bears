@@ -6,13 +6,11 @@ import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.bears.Activity.MainActivity;
-import com.example.bears.Activity.SearchResultActivity;
 import com.example.bears.R;
 
 import java.util.ArrayList;
@@ -21,6 +19,7 @@ public class STT implements RecognitionListener {
     Context context;
     TTS tts;
     ImageView iv_voice;
+    LottieAnimationView anim_stt;
 
     public STT(Context context) {
         this.context = context;
@@ -29,10 +28,11 @@ public class STT implements RecognitionListener {
 
     @Override
     public void onReadyForSpeech(Bundle params) {
-//        수정해야함
-        View view = LayoutInflater.from(context).inflate(R.layout.activity_main, null, false);
-        iv_voice = view.findViewById(R.id.iv_voice);
+        iv_voice = ((MainActivity) context).findViewById(R.id.iv_voice);
+        anim_stt = ((MainActivity) context).findViewById(R.id.anim_stt);
+        anim_stt.setVisibility(View.VISIBLE);
         iv_voice.setImageResource(R.drawable.voice2);
+        anim_stt.playAnimation();
     }
 
     @Override
@@ -49,6 +49,9 @@ public class STT implements RecognitionListener {
 
     @Override
     public void onEndOfSpeech() {
+        iv_voice.setImageResource(R.drawable.voice);
+        anim_stt.pauseAnimation();
+        anim_stt.setVisibility(View.INVISIBLE);
     }
 
     @Override

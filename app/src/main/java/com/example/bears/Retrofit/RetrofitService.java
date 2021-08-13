@@ -13,13 +13,12 @@ import retrofit2.http.Query;
 public interface RetrofitService {
     @FormUrlEncoded
     @POST("/drivers/login")
-    Call<LoginModel> getLoginCheck(@Field("BusID") String BusID,
+    Call<LoginModel> getLoginCheck(@Field("BusId") String BusID,
                                    @Field("BusPwd") String BusPwd);
 
-
-    @POST("/")
-    Call<LoginModel> NoticeBusStop(@Field("busnumber") String busnumber,
-                                   @Field("id") String arsId,
-                                   @Field("password") String busRoutedId);
+    @FormUrlEncoded
+    @POST("/user/boarding")
+    Call<LoginModel> NoticeBusStop(@Field("arsId") String arsId,
+                                   @Field("vehId") String vehId);
 
 }

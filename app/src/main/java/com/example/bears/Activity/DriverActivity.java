@@ -51,7 +51,6 @@ public class DriverActivity extends AppCompatActivity {
         String id = intent.getStringExtra("beaconID");
         tv_beaconnum.setText(id);
 
-
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,30 +74,29 @@ public class DriverActivity extends AppCompatActivity {
         driverData.add(new DriverData("성신여자대학교 입구역"));
         driverData.add(new DriverData("돈암2동주민센터입구.흥천사"));
         driverData.add(new DriverData("아리랑고개.아리랑시네미디어센터"));
-
     }
 
     private void init() {
         try {
-            mSocket = IO.socket("http://10.0.2.2:80");
+            mSocket = IO.socket("ec2-3-36-159-238.ap-northeast-2.compute.amazonaws.com:3000");
+            mSocket.connect();
             Log.d("SOCKET", "Connection success : " + mSocket.id());
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        mSocket.connect();
 
         JSONObject data = new JSONObject();
         try {
-            data.put("key1", "value1");
-            data.put("key2", "value2");
-            mSocket.emit("event-name", data);
+            // 보내는 테스트
+            data.put("username", "username");
+            data.put("roomNumber", "roomNumber");
+            mSocket.emit("enter", data);
         } catch(JSONException e) {
             e.printStackTrace();
         }
 
-
         mSocket.on(Socket.EVENT_CONNECT, onConnect);
-        mSocket.on("chat-message", onMessageReceived);
+        mSocket.on("enter", onMessageReceived);
     }
 
     @Override
@@ -114,6 +112,7 @@ public class DriverActivity extends AppCompatActivity {
             // your code...
         }
     };
+
     // 서버로부터 전달받은 'chat-message' Event 처리.
     private Emitter.Listener onMessageReceived = new Emitter.Listener() {
         @Override
@@ -122,6 +121,7 @@ public class DriverActivity extends AppCompatActivity {
             try {
                 JSONObject receivedData = (JSONObject) args[0];
                 String recievedMsg = receivedData.getString("key값");
+                Log.d("@받음@", "recievedMsg : " + recievedMsg);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

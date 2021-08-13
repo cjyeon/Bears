@@ -170,6 +170,9 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                                     StationByResultMap = stationByUidItem.get();
                                     current_result = StationByResultMap.get("arrmsg1");
                                     vehId1 = StationByResultMap.get("vehId1");
+                                    String busroutedId = StationByResultMap.get("busRouteId");
+
+                                    Log.d("버스아이디#######", busroutedId);
 
                                     if (!current_result.equals(result)) {
                                         result = current_result;
@@ -282,7 +285,10 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
             public void onClick(View v) {
                 // 버스기사에게 알림
                 retrofitService = RetrofitBuilder.getRetrofit().create(RetrofitService.class);
-                Call<LoginModel> call = retrofitService.NoticeBusStop(busnumber, ars_Id, vehId1);
+                Call<LoginModel> call = retrofitService.NoticeBusStop(ars_Id, vehId1);
+
+                Log.d("버스 아이디@!@!@!!", "vehId1 : " + vehId1);
+
                 call.enqueue(new Callback<LoginModel>() {
                     @Override
                     public void onResponse(Call<LoginModel> call, Response<LoginModel> response) {
@@ -303,8 +309,8 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                         } else if (response.code() == 404) {
                             Toast.makeText(SearchResultActivity.this, "인터넷 연결을 확인해주세요"
                                     , Toast.LENGTH_SHORT).show();
-                            Log.d("ssss", response.message());
 
+                            Log.d("ssss", response.message());
                         }
                     }
 
