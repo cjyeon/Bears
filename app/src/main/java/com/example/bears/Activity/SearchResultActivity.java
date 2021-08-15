@@ -68,6 +68,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
     int repeat;
     Region region;
     Thread timeChange;
+    CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +110,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
 
         // 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
         beaconManager.bind(this);
-            beaconManager.bindInternal(this);
+        beaconManager.bindInternal(this);
         // 즐겨찾기 유무 확인 후 아이콘 적용
         class SelectRunnable implements Runnable {
             @Override
@@ -127,34 +128,11 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
         Thread t = new Thread(selectRunnable);
         t.start();
 
-        if (!current_result.equals(result)) {
-            result = current_result;
-            Log.d("StationByUid 결과", "arrmsg1 : " + result);
-            try {
-                if (!result.equals("[차고지출발]") || !result.equals("운행종료")) {
-                    array = result.split("\\[");
-                    minutes = array[0].substring(0, result.indexOf("분"));
-                    seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
-                    countDown(minutes, seconds);
-                }
-            } catch (Exception e) {
-                tv_arrivaltime.setText(result);
-            }
-            if (!result.equals("곧 도착")) {
-                String result2 = array[1].substring(0, array[1].length() - 1);
-                tv_arrivalbusstop.setText(result2);
-            }
-        }
-        stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
-                "serviceKey=" + BusStopServiceKey +
-                "&arsId=" + ars_Id;
-
         timeChange = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (!Thread.interrupted())
                     try {
-                        Thread.sleep(5000);
                         runOnUiThread(new Runnable() // start actions in UI thread
                         {
                             @Override
@@ -171,32 +149,31 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                                     current_result = StationByResultMap.get("arrmsg1");
                                     vehId1 = StationByResultMap.get("vehId1");
 
-                                    if (!current_result.equals(result)) {
-                                        result = current_result;
-                                        Log.d("StationByUid 결과", "arrmsg1 : " + result);
-                                        if (result.equals("[차고지출발]")) {
-                                            result = result.replaceAll("\\[", "").replaceAll("\\]", "");
-                                            tv_arrivaltime.setText(result);
-                                            tv_arrivalbusstop.setText("");
-                                        } else if (result.equals("곧 도착") || result.equals("운행종료")) {
-                                            tv_arrivaltime.setText(result);
-                                            tv_arrivalbusstop.setText("");
-                                        } else {
-                                            array = result.split("\\[");
-                                            minutes = array[0].substring(0, result.indexOf("분"));
+                                    Log.d("StationByUid 결과", "arrmsg1 : " + current_result);
+                                    if (current_result.contains("[막차]")) {
+                                        current_result = current_result.replaceAll("\\[막차\\] ", "");
+                                    }
+                                    if (current_result.equals("[차고지출발]")) {
+                                        current_result = current_result.replaceAll("\\[", "").replaceAll("\\]", "");
+                                        tv_arrivaltime.setText(current_result);
+                                        tv_arrivalbusstop.setText("");
+                                    } else if (current_result.equals("곧 도착") || current_result.equals("운행종료") || current_result.equals("출발대기")) {
+                                        tv_arrivaltime.setText(current_result);
+                                        tv_arrivalbusstop.setText("");
+                                    } else {
+                                        array = current_result.split("\\[");
+                                        minutes = array[0].substring(0, current_result.indexOf("분"));
 
-                                            if (result.contains("초"))
-                                                seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
-                                            else
-                                                seconds = "0";
+                                        if (current_result.contains("초"))
+                                            seconds = array[0].substring(current_result.indexOf("분") + 1, current_result.indexOf("초"));
+                                        else
+                                            seconds = "0";
 
-                                            tv_arrivalbusstop.setText(array[1].substring(0, array[1].length() - 1));
-                                            countDown(minutes, seconds);
+                                        if (countDownTimer != null) {
+                                            countDownTimer.cancel();
                                         }
-                                        if (!result.equals("곧 도착")) {
-                                            String result2 = array[1].substring(0, array[1].length() - 1);
-                                            tv_arrivalbusstop.setText(result2);
-                                        }
+                                        countDown(minutes, seconds);
+                                        tv_arrivalbusstop.setText(array[1].substring(0, array[1].length() - 1));
                                     }
                                 } catch (ExecutionException e) {
                                     e.printStackTrace();
@@ -284,8 +261,6 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                 retrofitService = RetrofitBuilder.getRetrofit().create(RetrofitService.class);
                 Call<LoginModel> call = retrofitService.NoticeBusStop(ars_Id, vehId1);
 
-                Log.d("버스 아이디@!@!@!!", "vehId1 : " + vehId1);
-
                 call.enqueue(new Callback<LoginModel>() {
                     @Override
                     public void onResponse(Call<LoginModel> call, Response<LoginModel> response) {
@@ -331,7 +306,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
 
         // 첫번쨰 인자 : 원하는 시간 (예를들어 30초면 30 x 1000(주기))
         // 두번쨰 인자 : 주기( 1000 = 1초)
-        new CountDownTimer(conversionTime, 1000) {
+        countDownTimer = new CountDownTimer(conversionTime, 1000) {
             // 특정 시간마다 뷰 변경
             public void onTick(long millisUntilFinished) {
                 // 분단위
@@ -339,12 +314,14 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                 String min = String.valueOf(getMin / (60 * 1000)); // 몫
                 // 초단위
                 String second = String.valueOf((getMin % (60 * 1000)) / 1000); // 나머지
-                tv_arrivaltime.setText(min + "분 " + second + "초");
+                tv_arrivaltime.setText(min + "분 " + second + "초 후 도착 예정");
             }
             public void onFinish() {
             // 제한시간 종료시
             }
-        }.start();
+        };
+
+        countDownTimer.start();
     }
 
     @Override

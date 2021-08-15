@@ -38,11 +38,12 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
     Context context;
     static List<BookmarkEntity> bookmarkEntities = new ArrayList<>();
     private BookmarkDB bookmarkDB;
-    String stationByUidUrl, BusStopServiceKey, busNum, stationId, stationName, nextStation, result, current_result, vehId1, seconds, minutes;
+    String stationByUidUrl, BusStopServiceKey, busNum, stationId, stationName, nextStation, current_result, vehId1, seconds, minutes;
     public HashMap<String, String> StationByResultMap;
     String[] array;
     ArrayList<String> arr_vehId1 = new ArrayList<>();
     ArrayList<String> arr_arrmsg1 = new ArrayList<>();
+    CountDownTimer countDownTimer;
 
     public static Thread t, tt;
 
@@ -108,33 +109,36 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                                         arr_arrmsg1.add(current_result);
                                         arr_vehId1.add(vehId1);
                                     } catch (NullPointerException e) {
-                                        Log.d("api 도착시간 널값", "arrmsg1 : " + result);
+                                        Log.d("api 도착시간 널값", "arrmsg1 : " + current_result);
                                     }
 
                                     arr_arrmsg1.set(position, current_result);
 
-                                    if (!current_result.equals(result)) {
-                                        result = current_result;
-                                        Log.d("StationByUid 결과", "arrmsg1 : " + result);
-                                        if (result.equals("[차고지출발]")) {
-                                            result = result.replaceAll("\\[", "").replaceAll("\\]", "");
-                                            holder.tv_arrivaltime.setText(result);
-                                            holder.tv_arrivalbusstop.setText("");
-                                        } else if (result.equals("곧 도착") || result.equals("운행종료")) {
-                                            holder.tv_arrivaltime.setText(result);
-                                            holder.tv_arrivalbusstop.setText("");
-                                        } else {
-                                            array = result.split("\\[");
-                                            minutes = array[0].substring(0, result.indexOf("분"));
+                                    Log.d("StationByUid 결과", "arrmsg1 : " + current_result);
+                                    if (current_result.contains("[막차]")) {
+                                        current_result = current_result.replaceAll("\\[막차\\] ", "");
+                                    }
+                                    if (current_result.equals("[차고지출발]")) {
+                                        current_result = current_result.replaceAll("\\[", "").replaceAll("\\]", "");
+                                        holder.tv_arrivaltime.setText(current_result);
+                                        holder.tv_arrivalbusstop.setText("");
+                                    } else if (current_result.equals("곧 도착") || current_result.equals("운행종료") || current_result.equals("출발대기")) {
+                                        holder.tv_arrivaltime.setText(current_result);
+                                        holder.tv_arrivalbusstop.setText("");
+                                    } else {
+                                        array = current_result.split("\\[");
+                                        minutes = array[0].substring(0, current_result.indexOf("분"));
 
-                                            if (result.contains("초"))
-                                                seconds = array[0].substring(result.indexOf("분") + 1, result.indexOf("초"));
-                                            else
-                                                seconds ="0";
+                                        if (current_result.contains("초"))
+                                            seconds = array[0].substring(current_result.indexOf("분") + 1, current_result.indexOf("초"));
+                                        else
+                                            seconds = "0";
 
-                                            holder.tv_arrivalbusstop.setText(array[1].substring(0, array[1].length() - 1));
-                                            countDown(minutes, seconds, holder);
+                                        if (countDownTimer != null) {
+                                            countDownTimer.cancel();
                                         }
+                                        countDown(minutes, seconds, holder);
+                                        holder.tv_arrivalbusstop.setText(array[1].substring(0, array[1].length() - 1));
                                     }
                                 } catch (ExecutionException e) {
                                     e.printStackTrace();
@@ -219,14 +223,14 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
-                        iv_star.setImageResource(R.drawable.star_outlined);
-                        //북마크데이터에서 삭제
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                BookmarkDB.getInstance(itemView.getContext()).bookmarkDao().delete((BookmarkEntity) getItems().get(position));
-                            }
-                        }).start();
+                    iv_star.setImageResource(R.drawable.star_outlined);
+                    //북마크데이터에서 삭제
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BookmarkDB.getInstance(itemView.getContext()).bookmarkDao().delete((BookmarkEntity) getItems().get(position));
+                        }
+                    }).start();
                 }
             });
         }
@@ -238,13 +242,12 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
     }
 
     public void countDown(String minutes, String seconds, MyViewHolder holder) {
-
         long conversionTime = 0;
 
         // 변환시간
         conversionTime = Long.valueOf(minutes) * 60 * 1000 + Long.valueOf(seconds) * 1000;
 
-        new CountDownTimer(conversionTime, 1000) {
+        countDownTimer = new CountDownTimer(conversionTime, 1000) {
 
             // 특정 시간마다 뷰 변경
             public void onTick(long millisUntilFinished) {
@@ -262,6 +265,8 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
             // 제한시간 종료시
             public void onFinish() {
             }
-        }.start();
+        };
+
+        countDownTimer.start();
     }
 }
