@@ -2,11 +2,13 @@ package com.example.bears.Activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +33,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -73,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         tv_mainbus = findViewById(R.id.tv_mainbus);
         iv_voice = findViewById(R.id.iv_voice);
         et_busstop = findViewById(R.id.et_busstop);
+
         intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
@@ -99,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                mRecognizer = SpeechRecognizer.createSpeechRecognizer(MainActivity.this);
+
+                mRecognizer = SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
                 mRecognizer.setRecognitionListener(stt);
                 mRecognizer.startListening(intent);
 
@@ -148,22 +153,25 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!et_busstop.getText().toString().equals("")) {
                     if (!tv_mainbus.getText().toString().equals("")) {
+
+                        // 버스정류장 직접 입력 시
+                        if (!et_busstop.getText().toString().equals(stationName)) {
+                            ars_Id = et_busstop.getText().toString();
+                        }
+
                         busnumber = busnumber.replaceAll(" ", "");
+
                         stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
                                 "serviceKey=" + BusStopServiceKey +
                                 "&arsId=" + ars_Id;
-                        Log.d("테스트", busnumber);
 
                         try {
-                            Log.d("테스트", ars_Id);
-
                             StationByUidItem stationByUidItem = new StationByUidItem(stationByUidUrl, busnumber);
                             stationByUidItem.execute();
                             StationByResultMap = stationByUidItem.get();
                             current_result = StationByResultMap.get("arrmsg1");
                             vehId1 = StationByResultMap.get("vehId1");
                             nextStation = StationByResultMap.get("nxtStn");
-                            Log.d("테스트", busnumber + current_result + vehId1 + nextStation);
 
                             Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
                             intent.putExtra("busnumber", busnumber);
@@ -218,8 +226,6 @@ public class MainActivity extends AppCompatActivity {
                             tmY = String.valueOf(location.getLatitude());
                             Log.d("경도", "getLongitude: " + location.getLongitude());
                             tmX = String.valueOf(location.getLongitude());
-
-
                         }
                     }
                 });
@@ -255,28 +261,6 @@ public class MainActivity extends AppCompatActivity {
         tv_mainbus.setText(busnumber);
         if (stationName != null) et_busstop.setText(stationName);
         else Log.d("stationNum", "널값");
-
-//        if (ars_Id != null) {
-//            if (busnumber != null) {
-//                busnumber = busnumber.replaceAll(" ", "");
-//                stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
-//                        "serviceKey=" + BusStopServiceKey +
-//                        "&arsId=" + ars_Id;
-//                StationByUidItem stationByUidItem = new StationByUidItem(stationByUidUrl, busnumber);
-//                stationByUidItem.execute();
-//                try {
-//                    StationByResultMap = stationByUidItem.get();
-//                    Log.d("StationByUid 결과", "rtNm : " + StationByResultMap.get("rtNm"));
-//                    Log.d("StationByUid 결과", "arrmsg1 : " + StationByResultMap.get("arrmsg1"));
-//                    Log.d("StationByUid 결과", "arrmsg2 : " + StationByResultMap.get("arrmsg2"));
-//                } catch (ExecutionException e) {
-//                    e.printStackTrace();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            } else Log.d("arsId는 있음", ars_Id);
-//        } else Log.d("arsId가 없음 ", "null 이라 안됨");
-
     }
 }
 

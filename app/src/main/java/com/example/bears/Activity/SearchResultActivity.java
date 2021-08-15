@@ -60,7 +60,6 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
     RetrofitService retrofitService;
     Button btn_beacon;
     BeaconManager beaconManager;
-    // 감지된 비콘들을 임시로 담을 리스트
     private List<Beacon> beaconList;
     int i;
     String TAG = "비콘 테스트";
@@ -68,6 +67,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
     Vibrator vibrator;
     int repeat;
     Region region;
+    Thread timeChange;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +84,6 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
         stationName = intent.getStringExtra("stationName");
         current_result = intent.getStringExtra("arrmsg1");
         vehId1 = intent.getStringExtra("vehId1");
-        System.out.println("넘어오는 도착예정 버스 아이디 : " + vehId1);
         nextStation = intent.getStringExtra("nextStation");
 
 //        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
@@ -109,7 +108,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
 
         // 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
-//        beaconManager.bind(this);
+        beaconManager.bind(this);
             beaconManager.bindInternal(this);
         // 즐겨찾기 유무 확인 후 아이콘 적용
         class SelectRunnable implements Runnable {
@@ -149,7 +148,8 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
         stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
                 "serviceKey=" + BusStopServiceKey +
                 "&arsId=" + ars_Id;
-        Thread timeChange = new Thread(new Runnable() {
+
+        timeChange = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (!Thread.interrupted())
@@ -170,9 +170,6 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                                     StationByResultMap = stationByUidItem.get();
                                     current_result = StationByResultMap.get("arrmsg1");
                                     vehId1 = StationByResultMap.get("vehId1");
-                                    String busroutedId = StationByResultMap.get("busRouteId");
-
-                                    Log.d("버스아이디#######", busroutedId);
 
                                     if (!current_result.equals(result)) {
                                         result = current_result;
@@ -227,6 +224,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                 finish();
             }
         });
+
         btn_beacon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -236,7 +234,6 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                 } else {
                     btn_beacon.setText("진동알림설정");
                     onDestroy();
-
                 }
             }
         });
@@ -353,7 +350,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        beaconManager.unbind(this);
+        beaconManager.unbind(this);
         beaconManager.unbindInternal(this);
         beaconManager.stopRangingBeacons(region);
         Log.d("비콘 종료시도","종료시도했다");
@@ -400,8 +397,6 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
         }
     }
 
-
-
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
         //        @RequiresApi(api = Build.VERSION_CODES.O)
@@ -418,4 +413,12 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
             handler.sendEmptyMessageDelayed(0, 500);// 자기 자신을 0.5초마다 호출
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        timeChange.interrupt();
+        finish();
+    }
 }

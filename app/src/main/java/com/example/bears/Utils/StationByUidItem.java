@@ -67,7 +67,7 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
                     Log.d("에이피아이 널값문제", "rtNm : 널이다");
                 }
                 if(rtNm.equals(busnumber)){
-                    vehId1 = getTagValue("busRouteId",eElement);
+                    vehId1 = getTagValue("vehId1",eElement);
                     arrmsg1 = getTagValue("arrmsg1", eElement);
                     arrmsg2 = getTagValue("arrmsg2", eElement);
                     nxtStn = getTagValue("nxtStn", eElement);
@@ -88,7 +88,6 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
         super.onPostExecute(result);
         // TODO Auto-generated method stub
     }
-
 
     private String getTagValue(String tag, Element eElement) {
         NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();

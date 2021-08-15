@@ -44,6 +44,8 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
     ArrayList<String> arr_vehId1 = new ArrayList<>();
     ArrayList<String> arr_arrmsg1 = new ArrayList<>();
 
+    public static Thread t, tt;
+
     public BookmarkAdapter(BookmarkDB bookmarkDB, Context context) {
         this.bookmarkDB = bookmarkDB;
         this.context = context;
@@ -141,6 +143,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                                 }
                             }
                         });
+
                         Thread.sleep(10000);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
@@ -164,16 +167,17 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                     holder.stationId.setText(stationId);
                     holder.tv_busnum.setText(busNum);
                     holder.stationDirec.setText(nextStation + " 방면");
+                    holder.iv_star.setImageResource(R.drawable.star_filled);
                 }
             }
         }
 
         SelectRunnable selectRunnable = new SelectRunnable();
-        Thread t = new Thread(selectRunnable);
+        t = new Thread(selectRunnable);
         t.start();
 
         Timechange timechange = new Timechange();
-        Thread tt = new Thread(timechange);
+        tt = new Thread(timechange);
         tt.start();
     }
 
@@ -215,17 +219,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
-                    i = 1 - i;
-                    if (i == 0) {
-                        iv_star.setImageResource(R.drawable.star_filled);
-                        //북마크에 추가
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                BookmarkDB.getInstance(itemView.getContext()).bookmarkDao().insert((BookmarkEntity) getItems().get(position));
-                            }
-                        }).start();
-                    } else {
                         iv_star.setImageResource(R.drawable.star_outlined);
                         //북마크데이터에서 삭제
                         new Thread(new Runnable() {
@@ -234,7 +227,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                                 BookmarkDB.getInstance(itemView.getContext()).bookmarkDao().delete((BookmarkEntity) getItems().get(position));
                             }
                         }).start();
-                    }
                 }
             });
         }

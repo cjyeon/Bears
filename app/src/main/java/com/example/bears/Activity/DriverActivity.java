@@ -78,7 +78,7 @@ public class DriverActivity extends AppCompatActivity {
 
     private void init() {
         try {
-            mSocket = IO.socket("ec2-3-36-159-238.ap-northeast-2.compute.amazonaws.com:3000");
+            mSocket = IO.socket("http://ec2-3-36-159-238.ap-northeast-2.compute.amazonaws.com:3000");
             mSocket.connect();
             Log.d("SOCKET", "Connection success : " + mSocket.id());
         } catch (URISyntaxException e) {

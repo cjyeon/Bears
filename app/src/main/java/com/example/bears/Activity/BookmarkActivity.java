@@ -25,8 +25,6 @@ public class BookmarkActivity extends AppCompatActivity {
 
     private BookmarkDB bookmarkDB;
 
-    int i = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +36,6 @@ public class BookmarkActivity extends AppCompatActivity {
         iv_backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Thread.interrupted();
                 finish();
             }
         });
