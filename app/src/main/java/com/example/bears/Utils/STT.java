@@ -9,6 +9,7 @@ import android.speech.SpeechRecognizer;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -28,6 +29,7 @@ public class STT implements RecognitionListener {
     LottieAnimationView anim_stt;
     String busNumber;
     TextView tv_mainbus;
+    LinearLayout ll_voice;
 
     public STT(Context context) {
         this.context = context;
@@ -39,6 +41,7 @@ public class STT implements RecognitionListener {
         iv_voice = ((MainActivity) context).findViewById(R.id.iv_voice);
         anim_stt = ((MainActivity) context).findViewById(R.id.anim_stt);
         tv_mainbus = ((MainActivity) context).findViewById(R.id.tv_mainbus);
+        ll_voice = ((MainActivity) context).findViewById(R.id.ll_voice);
         anim_stt.setVisibility(View.VISIBLE);
         iv_voice.setImageResource(R.drawable.voice2);
         anim_stt.playAnimation();
@@ -61,6 +64,8 @@ public class STT implements RecognitionListener {
         iv_voice.setImageResource(R.drawable.voice);
         anim_stt.pauseAnimation();
         anim_stt.setVisibility(View.INVISIBLE);
+
+        ll_voice.setEnabled(true);
     }
 
     @Override
@@ -114,8 +119,10 @@ public class STT implements RecognitionListener {
         if (!matches.isEmpty()) {
             tts.speech(busNumber+"번으로 검색합니다.");
             tv_mainbus.setText(busNumber);
-        } else
+        } else {
             tts.speech("검색어를 찾을 수 없습니다");
+        }
+
     }
 
     @Override

@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 et_busstop.setText("");
 
                 tts.speech("음성인식을 시작합니다.");
+                ll_voice.setEnabled(false);
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
