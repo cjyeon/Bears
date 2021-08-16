@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DriverAdapter extends RecyclerView.Adapter<DriverAdapter.MyViewHolder> {
     Context context;
@@ -47,6 +48,11 @@ public class DriverAdapter extends RecyclerView.Adapter<DriverAdapter.MyViewHold
 
             tv_busstop = itemView.findViewById(R.id.tv_busstop);
         }
+    }
+
+    public void setItem(ArrayList<DriverData> data) {
+        driverData = data;
+        notifyDataSetChanged();
     }
 }
 

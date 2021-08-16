@@ -76,10 +76,13 @@ public class LoginActivity extends AppCompatActivity {
                                             , Toast.LENGTH_SHORT).show();
                                     Log.d("ssss", response.message());
                                 }
-                            } else if (response.code() == 555) {
+                            } else if (response.code() == 404) {
                                 Toast.makeText(LoginActivity.this, "인터넷 연결을 확인해주세요"
                                         , Toast.LENGTH_SHORT).show();
                                 Log.d("ssss", response.message());
+                            } else {
+                                Toast.makeText(LoginActivity.this, "서비스 점검중입니다."
+                                        , Toast.LENGTH_SHORT).show();
                             }
                         }
 
