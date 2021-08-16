@@ -24,6 +24,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bears.Model.LoginModel;
+import com.example.bears.Model.BeaModel;
 import com.example.bears.R;
 import com.example.bears.Retrofit.RetrofitBuilder;
 import com.example.bears.Retrofit.RetrofitService;
@@ -35,6 +36,7 @@ import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
@@ -53,13 +55,14 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
     LinearLayout ll_bookmark, ll_bell;
     ImageView iv_backbtn, iv_star, lv_bell;
     TextView tv_busnum, tv_arrivaltime, tv_arrivalbusstop, tv_curBusStop;
-    static String busnumber, ars_Id, stationName, result, vehId1, nextStation;
+    static String busnumber, ars_Id, stationName, result, vehId1, nextStation,beaId,checkVehId;
     String stationByUidUrl, BusStopServiceKey, seconds, minutes, current_result;
     public HashMap<String, String> StationByResultMap;
     String[] array;
     RetrofitService retrofitService;
     Button btn_beacon;
     BeaconManager beaconManager;
+    // 감지된 비콘들을 임시로 담을 리스트
     private List<Beacon> beaconList;
     int i;
     String TAG = "비콘 테스트";
@@ -86,7 +89,8 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
         current_result = intent.getStringExtra("arrmsg1");
         vehId1 = intent.getStringExtra("vehId1");
         nextStation = intent.getStringExtra("nextStation");
-
+        beaId = null;
+        checkVehId = null;
 //        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
         BusStopServiceKey = "%2Fvd166HaBUDR77oPC3OxbJw8A9HfCkD7s5zPirOIZZGsorMCJDXLwn4aM%2Bx2G3Qm2UZOuvp5zcTEFs5cgqM1Gg%3D%3D";
 
@@ -108,9 +112,9 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
 
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
 
-        // 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
-        beaconManager.bind(this);
-        beaconManager.bindInternal(this);
+//        // 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
+//        //        beaconManager.bind(this);
+//        beaconManager.bindInternal(this);
         // 즐겨찾기 유무 확인 후 아이콘 적용
         class SelectRunnable implements Runnable {
             @Override
@@ -149,7 +153,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                                     current_result = StationByResultMap.get("arrmsg1");
                                     vehId1 = StationByResultMap.get("vehId1");
 
-                                    Log.d("StationByUid 결과", "arrmsg1 : " + current_result);
+                                    Log.d("StationByUid 결과", "arrmsg1 : " + current_result+"   vehId: "+vehId1);
                                     if (current_result.contains("[막차]")) {
                                         current_result = current_result.replaceAll("\\[막차\\] ", "");
                                     }
@@ -211,6 +215,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                 } else {
                     btn_beacon.setText("진동알림설정");
                     onDestroy();
+
                 }
             }
         });
@@ -258,39 +263,49 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
             @Override
             public void onClick(View v) {
                 // 버스기사에게 알림
-                retrofitService = RetrofitBuilder.getRetrofit().create(RetrofitService.class);
-                Call<LoginModel> call = retrofitService.NoticeBusStop(ars_Id, vehId1);
+                if (vehId1 != checkVehId) { //버스 기사 알림할때 vehid 값이 달라질때만 알림가게끔? 꼐속누르는거 방지
+                    retrofitService = RetrofitBuilder.getRetrofit().create(RetrofitService.class);
+                    Call<BeaModel> call = retrofitService.NoticeBusStop(stationName, vehId1);
 
-                call.enqueue(new Callback<LoginModel>() {
-                    @Override
-                    public void onResponse(Call<LoginModel> call, Response<LoginModel> response) {
-                        if (response.isSuccessful()) {
-                            Log.d("연결 성공", response.message());
-                            LoginModel loginModel = response.body();
-                            Log.v("Code", loginModel.getCode());
-                            Log.v("Message", loginModel.getMessage());
-                            if (loginModel.getCode().equals("200")) {
-                                Toast.makeText(SearchResultActivity.this, "알림을 보냈습니다."
+                    Log.d("버스 아이디@!@!@!!", "vehId1 : " + vehId1);
+
+                    call.enqueue(new Callback<BeaModel>() {
+                        @Override
+                        public void onResponse(Call<BeaModel> call, Response<BeaModel> response) {
+                            if (response.isSuccessful()) {
+                                Log.d("연결 성공", response.message());
+                                BeaModel beaModel = response.body();
+                                checkVehId = vehId1;
+                                if (beaModel.getCode().equals("200")) {
+                                    Toast.makeText(SearchResultActivity.this, "알림을 보냈습니다."
+                                            , Toast.LENGTH_SHORT).show();
+                                    lv_bell.setColorFilter(Color.parseColor("#55ff0000"));//색변경
+                                    Log.v("Code", beaModel.getCode());
+                                    Log.v("Message", beaModel.getMessage());
+                                    beaId = beaModel.getBeaId();
+                                    Log.v("beaId", beaId);
+                                    // 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
+                                    //        beaconManager.bind(this);
+                                    beaconManager.bindInternal(SearchResultActivity.this);
+                                } else {
+                                    Toast.makeText(SearchResultActivity.this, "알림실패"
+                                            , Toast.LENGTH_SHORT).show();
+                                    Log.d("ssss", response.message());
+                                }
+                            } else if (response.code() == 404) {
+                                Toast.makeText(SearchResultActivity.this, "인터넷 연결을 확인해주세요"
                                         , Toast.LENGTH_SHORT).show();
-                                lv_bell.setColorFilter(Color.parseColor("#55ff0000"));//색변경
-                            } else {
-                                Toast.makeText(SearchResultActivity.this, "알림실패"
-                                        , Toast.LENGTH_SHORT).show();
+
                                 Log.d("ssss", response.message());
                             }
-                        } else if (response.code() == 404) {
-                            Toast.makeText(SearchResultActivity.this, "인터넷 연결을 확인해주세요"
-                                    , Toast.LENGTH_SHORT).show();
-
-                            Log.d("ssss", response.message());
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<LoginModel> call, Throwable t) {
-                        Log.d("ssss", t.getMessage());
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<BeaModel> call, Throwable t) {
+                            Log.d("ssss", t.getMessage());
+                        }
+                    });
+                }
             }
         });
     }
@@ -327,7 +342,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        beaconManager.unbind(this);
+//        beaconManager.unbind(this);
         beaconManager.unbindInternal(this);
         beaconManager.stopRangingBeacons(region);
         Log.d("비콘 종료시도","종료시도했다");
@@ -351,9 +366,10 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
             }
             @Override
             public void didDetermineStateForRegion(int i, Region region) {
-                Log.d(TAG, "비콘봤으면 0 안보이면 1 :" + i);
+                Log.d(TAG, "비콘봤으면 0 안보이면 1 : " + i);
             }
         });
+
         beaconManager.addRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
@@ -366,13 +382,18 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
             }
         });
         try {
-            //beaconManager.startMonitoringBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
-            region = new Region("myRangingUniqueId", null, null, null);
+//            beaconManager.startMonitoringBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
+            Log.d("비콘아이디: ",beaId);
+//            region = new Region("myRangingUniqueId", Identifier.parse("74278bda-b644-4520-8f0c-720eaf059935"), null, null);
+            region = new Region("myRangingUniqueId", Identifier.parse(beaId), null, null);
+//            region = new Region("myRangingUniqueId", null, null, null);
             beaconManager.startRangingBeaconsInRegion(region);
             Log.d("region값: ",region.toString());
         } catch (RemoteException e) {
         }
     }
+
+
 
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
@@ -388,13 +409,10 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                 }
             }
             handler.sendEmptyMessageDelayed(0, 500);// 자기 자신을 0.5초마다 호출
-        }
-    };
-
+        }};
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
         timeChange.interrupt();
         finish();
     }

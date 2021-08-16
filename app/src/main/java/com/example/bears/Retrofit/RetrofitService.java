@@ -1,14 +1,12 @@
 package com.example.bears.Retrofit;
 
 import com.example.bears.Model.LoginModel;
-import com.google.gson.JsonObject;
+import com.example.bears.Model.BeaModel;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
 
 public interface RetrofitService {
     @FormUrlEncoded
@@ -18,7 +16,7 @@ public interface RetrofitService {
 
     @FormUrlEncoded
     @POST("/user/boarding")
-    Call<LoginModel> NoticeBusStop(@Field("arsId") String arsId,
-                                   @Field("vehId") String vehId);
+    Call<BeaModel> NoticeBusStop(@Field("BusStopName") String BusStopName,
+                                 @Field("vehId") String vehId);
 
 }
