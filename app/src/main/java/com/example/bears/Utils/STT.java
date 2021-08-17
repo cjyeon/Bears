@@ -147,8 +147,8 @@ public class STT implements RecognitionListener {
         }
 
         // 숫자를 한글로 인식되는 경우 자동 변환
-        String[] hangleZero = {"십","백","천","만"};
-        String[] zero = {"0", "00" , "000" ,"0000"};
+        String[] hangleZero = {"십","백","만"};
+        String[] zero = {"0", "00" ,"0000"};
         for( int i = 0 ; i < hangleZero.length -1; i++){
             result = result.replaceAll(hangleZero[i], zero[i]);
         }

@@ -156,17 +156,16 @@
 
     <Button
         android:id="@+id/btn_beacon"
+        style="@style/generalText"
         android:layout_width="170dp"
         android:layout_height="40dp"
         android:layout_marginTop="25dp"
         android:background="@drawable/bus_arrival_alarm"
+        android:enabled="false"
         android:text="버스도착 알림받기"
         android:textSize="16dp"
-        style="@style/generalText"
         app:layout_constraintEnd_toEndOf="@+id/ll_bell"
         app:layout_constraintStart_toStartOf="@+id/ll_bell"
-        app:layout_constraintTop_toBottomOf="@+id/ll_bell"
-        tools:text="버스도착 알림받기"
-        android:enabled="false"/>
+        app:layout_constraintTop_toBottomOf="@+id/ll_bell" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
