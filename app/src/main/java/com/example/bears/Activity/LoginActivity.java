@@ -15,10 +15,6 @@ import com.example.bears.Model.LoginModel;
 import com.example.bears.R;
 import com.example.bears.Retrofit.RetrofitBuilder;
 import com.example.bears.Retrofit.RetrofitService;
-import com.google.gson.JsonObject;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -54,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (et_id.getText().toString().equals("") || et_pw.getText().toString().equals("")) {
                     Toast.makeText(LoginActivity.this, "아이디와 비밀번호를 입력하세요", Toast.LENGTH_SHORT).show();
                 } else {
-                    //서버에서 아이디 비번 일치하는 지 확인받아와야 함
+                    //서버에서 아이디 비번 일치하는 지 확인
                     retrofitService = RetrofitBuilder.getRetrofit().create(RetrofitService.class);
                     String id = et_id.getText().toString();
                     Call<LoginModel> call = retrofitService.getLoginCheck(id, et_pw.getText().toString());

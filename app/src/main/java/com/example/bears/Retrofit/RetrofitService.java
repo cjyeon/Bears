@@ -1,7 +1,7 @@
 package com.example.bears.Retrofit;
 
 import com.example.bears.Model.LoginModel;
-import com.example.bears.Model.BeaModel;
+import com.example.bears.Model.BeaconModel;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -16,7 +16,7 @@ public interface RetrofitService {
 
     @FormUrlEncoded
     @POST("/user/boarding")
-    Call<BeaModel> NoticeBusStop(@Field("BusStopName") String BusStopName,
-                                 @Field("vehId") String vehId);
+    Call<BeaconModel> NoticeBusStop(@Field("BusStopName") String BusStopName,
+                                    @Field("vehId") String vehId);
 
 }

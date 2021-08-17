@@ -1,10 +1,7 @@
 package com.example.bears.Utils;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.example.bears.Activity.MainActivity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -14,7 +11,6 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,20 +18,16 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class BusStopOpenAPI extends AsyncTask<Void, Void, HashMap<String,String>> {
     private String url;
-    public BusStopOpenAPI( String url) {
 
+    public BusStopOpenAPI( String url) {
         this.url = url;
     }
-    
 
     @Override
     protected HashMap<String, String> doInBackground(Void... params) {
         String ars_id = null;
         String stationNm = null;
         HashMap<String, String> resultMap = new HashMap<String,String>();
-
-        Log.d("doInBACKGROUNTD", url);
-        // parsing할 url 지정(API 키 포함해서)
 
         DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = null;
@@ -73,8 +65,8 @@ public class BusStopOpenAPI extends AsyncTask<Void, Void, HashMap<String,String>
                 Log.d("OPEN_API", "stationNm : " +stationNm);
                 return resultMap;
 
-            }    // for end
-        }    // if end
+            }
+        }
         return null;
     }
 
@@ -92,7 +84,5 @@ public class BusStopOpenAPI extends AsyncTask<Void, Void, HashMap<String,String>
             return null;
         return nValue.getNodeValue();
     }
-
-
 }
 

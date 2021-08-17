@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.bears.DriverAdapter;
 import com.example.bears.DriverData;
 import com.example.bears.R;
-import com.example.bears.RecyclerDecoration;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -25,8 +24,6 @@ import java.util.ArrayList;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
-
 
 public class DriverActivity extends AppCompatActivity {
     Button btn_logout;
@@ -46,8 +43,6 @@ public class DriverActivity extends AppCompatActivity {
         btn_logout = findViewById(R.id.btn_logout);
         rv_driver = findViewById(R.id.rv_driver);
         tv_beaconnum = findViewById(R.id.tv_beaconnum);
-        RecyclerDecoration decoration_height = new RecyclerDecoration(20);
-        rv_driver.addItemDecoration(decoration_height);
         data = new JSONObject();
         driverData = new ArrayList<>();
 
@@ -70,7 +65,7 @@ public class DriverActivity extends AppCompatActivity {
                 finish();
             }
         });
-                init();
+        init();
 
     }
 
@@ -96,13 +91,13 @@ public class DriverActivity extends AppCompatActivity {
             mSocket.on("board", args -> {
                 for (int i = 0; i < args.length; i++) {
                     String s = args[0].toString();
-                    s=s.replace("[","");
-                    s=s.replace("]","");
-                    s=s.replace("\"","");
-                    Log.d("정류장 정보: ",s);
-                    String [] strarr = s.split(",");
+                    s = s.replace("[", "");
+                    s = s.replace("]", "");
+                    s = s.replace("\"", "");
+                    Log.d("정류장 정보: ", s);
+                    String[] strarr = s.split(",");
                     for (String s1 : strarr) {
-                        s1 = "["+s1+"]"+" 정류장 ";
+                        s1 = "[" + s1 + "]" + " 정류장 ";
                         driverData.add(new DriverData(s1));//데이터 넣기
                     }
                 }

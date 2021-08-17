@@ -17,7 +17,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, String>> {
-
     private String url;
     private String busnumber;
 
@@ -34,7 +33,6 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
         String arrmsg2 = null;
         String vehId1 = null;
         String nxtStn = null;
-        // parsing할 url 지정(API 키 포함해서)
 
         DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = null;
@@ -52,7 +50,6 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
 
         // root tag
         doc.getDocumentElement().normalize();
-        System.out.println("Root element: " + doc.getDocumentElement().getNodeName()); // Root element: result
 
         // 파싱할 tag
         NodeList nList = doc.getElementsByTagName("itemList");
@@ -64,7 +61,7 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
                 Element eElement = (Element) nNode;
                 rtNm = getTagValue("rtNm", eElement);
                 if(rtNm == null){
-                    Log.d("에이피아이 널값문제", "rtNm : 널이다");
+                    Log.d("api Null", "rtNm : 널이다");
                 }
                 if(rtNm.equals(busnumber)){
                     vehId1 = getTagValue("vehId1",eElement);

@@ -10,10 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DriverAdapter extends RecyclerView.Adapter<DriverAdapter.MyViewHolder> {
-    Context context;
     static ArrayList<DriverData> driverData;
 
     public DriverAdapter(ArrayList<DriverData> driverData) {

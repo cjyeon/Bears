@@ -53,7 +53,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <LinearLayout
             android:id="@+id/ll_driver"
             android:layout_width="wrap_content"
@@ -94,7 +93,6 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/anim_stt"
         android:visibility="invisible"/>
-
 
     <LinearLayout
         android:id="@+id/ll_voice"
@@ -182,7 +180,6 @@
             style="@style/generalText"
             android:imeOptions="actionDone"/>
 
-
     </LinearLayout>
 
     <Button
@@ -196,31 +193,6 @@
         android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="@+id/ll_mainbusstop"
         app:layout_constraintStart_toStartOf="@+id/ll_mainbusstop"
-        app:layout_constraintTop_toBottomOf="@+id/ll_mainbusstop" />
-
-
-<!--    <EditText-->
-<!--        android:id="@+id/et_searchnum"-->
-<!--        android:layout_width="232dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:backgroundTint="@color/colorPrimaryDark"-->
-<!--        android:hint="버스번호를 입력해 주세요"-->
-<!--        android:inputType="number"-->
-<!--        android:textColorHint="@color/colorPrimaryDark"-->
-<!--        android:textSize="16dp"-->
-<!--        tools:layout_editor_absoluteX="86dp"-->
-<!--        tools:layout_editor_absoluteY="568dp" />-->
-
-<!--    <ImageView-->
-<!--        android:id="@+id/iv_searchbtn"-->
-<!--        android:layout_width="30dp"-->
-<!--        android:layout_height="30dp"-->
-<!--        android:layout_marginTop="3dp"-->
-<!--        android:layout_marginEnd="4dp"-->
-<!--        android:src="@drawable/search"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/et_searchnum"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/et_searchnum"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/et_searchnum"-->
-<!--        app:layout_constraintVertical_bias="0.0" />-->
+        app:layout_constraintTop_toBottomOf="@+id/ll_mainbusstop"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

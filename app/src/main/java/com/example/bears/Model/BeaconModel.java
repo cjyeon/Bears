@@ -2,7 +2,7 @@ package com.example.bears.Model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class BeaModel {
+public class BeaconModel {
     @SerializedName("code")
     private String code;
 
@@ -32,7 +32,7 @@ public class BeaModel {
         BeaId = beaId;
     }
 
-    public BeaModel(String code, String beaId, String message) {
+    public BeaconModel(String code, String beaId, String message) {
         this.code = code;
         BeaId = beaId;
         this.message = message;

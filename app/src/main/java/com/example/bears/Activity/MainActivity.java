@@ -2,13 +2,11 @@ package com.example.bears.Activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +31,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -50,9 +47,7 @@ public class MainActivity extends AppCompatActivity {
     static String tmX, tmY, BusStopUrl, BusStopServiceKey, ars_Id, stationByUidUrl;
     static String busnumber, stationName, current_result, vehId1, nextStation;
     int pressedTime = 0;
-    final int PERMISSION = 1;
     private FusedLocationProviderClient fusedLocationClient;
-    public Location location;
     STT stt;
     TTS tts;
     public HashMap<String, String> BusStopResultMap;
@@ -64,8 +59,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
-//        BusStopServiceKey = "%2Fvd166HaBUDR77oPC3OxbJw8A9HfCkD7s5zPirOIZZGsorMCJDXLwn4aM%2Bx2G3Qm2UZOuvp5zcTEFs5cgqM1Gg%3D%3D";
-//        BusStopServiceKey = "NtPpXt9U%2BkMh6dPR%2BuvLfBjuxXay8256MUBN6FBG093IVeVIPg6wQeb3aLBJsrzE3KAQ5%2BaTJGz9xEqbLPl%2BWQ%3D%3D";
 
         stt = new STT(this);
         tts = new TTS(this);
@@ -121,15 +114,16 @@ public class MainActivity extends AppCompatActivity {
                     BusStopResultMap = busStop.get();
                     ars_Id = Objects.requireNonNull(BusStopResultMap.get("arsId"));
                     stationName = Objects.requireNonNull(BusStopResultMap.get("stationNm"));
-                    Log.d("정류장 이름", stationName);
-                    Log.d("arsId 결과", ars_Id);
 
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.e("실패이유", "PerformAction", e.getCause());
                 }
 
+                Intent intent2 = getIntent();
+                busnumber = intent2.getStringExtra("busnumber");
+                tv_mainbus.setText(busnumber);
+                if (stationName != null) et_busstop.setText(stationName);
             }
         });
 
@@ -154,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!et_busstop.getText().toString().equals("")) {
                     if (!tv_mainbus.getText().toString().equals("")) {
+                        busnumber = tv_mainbus.getText().toString();
 
                         // 버스정류장 직접 입력 시
                         if (!et_busstop.getText().toString().equals(stationName)) {
@@ -184,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
                             startActivity(intent);
 
                         } catch (ExecutionException | InterruptedException | NullPointerException e) {
-                            Log.d("테스트", "exception발생");
                             tts.speech("버스의 도착 정보가 없습니다.");
                             e.printStackTrace();
                         }
@@ -245,7 +239,6 @@ public class MainActivity extends AppCompatActivity {
                 pressedTime = 0;
             } else {
                 super.onBackPressed();
-//                finish(); // app 종료 시키기
             }
         }
     }
@@ -256,12 +249,6 @@ public class MainActivity extends AppCompatActivity {
 
         tv_mainbus.setText("");
         et_busstop.setText("");
-
-        Intent intent2 = getIntent();
-        busnumber = intent2.getStringExtra("busnumber");
-        tv_mainbus.setText(busnumber);
-        if (stationName != null) et_busstop.setText(stationName);
-        else Log.d("stationNum", "널값");
     }
 }
 

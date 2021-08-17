@@ -1,13 +1,9 @@
 package com.example.bears;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,28 +12,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bears.Activity.BookmarkActivity;
-import com.example.bears.Activity.MainActivity;
 import com.example.bears.Activity.SearchResultActivity;
 import com.example.bears.Room.BookmarkDB;
-import com.example.bears.Room.BookmarkDao;
 import com.example.bears.Room.BookmarkEntity;
 import com.example.bears.Utils.StationByUidItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.LogRecord;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyViewHolder> {
     Context context;
     static List<BookmarkEntity> bookmarkEntities = new ArrayList<>();
-    private BookmarkDB bookmarkDB;
     String stationByUidUrl, BusStopServiceKey, busNum, stationId, stationName, nextStation, current_result, vehId1, seconds, minutes;
     public HashMap<String, String> StationByResultMap;
     String[] array;
@@ -47,8 +36,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
 
     public static Thread t, tt;
 
-    public BookmarkAdapter(BookmarkDB bookmarkDB, Context context) {
-        this.bookmarkDB = bookmarkDB;
+    public BookmarkAdapter(Context context) {
         this.context = context;
     }
 
@@ -73,8 +61,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-//        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
-        BusStopServiceKey = "NtPpXt9U%2BkMh6dPR%2BuvLfBjuxXay8256MUBN6FBG093IVeVIPg6wQeb3aLBJsrzE3KAQ5%2BaTJGz9xEqbLPl%2BWQ%3D%3D";
+        BusStopServiceKey = "SPJi5n0Hw%2Fbd8BBVjSB1hS8hnWIi95BW8oRu%2BN9lFGt%2Bpqu6gfnEPwYfXuOMsJ8ko8nJ1A1EWDOs1oNPommygQ%3D%3D";
 
         class Timechange implements Runnable {
             @Override
@@ -90,8 +77,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                                     stationName = bookmarkEntities.get(position).getStationName();
                                     stationId = bookmarkEntities.get(position).getStationId();
                                     busNum = bookmarkEntities.get(position).getBusNum();
-
-                                    System.out.println("타임체인지 실행" + busNum);
 
                                     stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
                                             "serviceKey=" + BusStopServiceKey +
@@ -114,7 +99,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
 
                                     arr_arrmsg1.set(position, current_result);
 
-                                    Log.d("StationByUid 결과", "arrmsg1 : " + current_result);
                                     if (current_result.contains("[막차]")) {
                                         current_result = current_result.replaceAll("\\[막차\\] ", "");
                                     }
@@ -151,7 +135,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                         Thread.sleep(10000);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
-                        // ooops
                     }
             }
         }
