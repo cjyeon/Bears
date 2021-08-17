@@ -52,7 +52,7 @@ import retrofit2.Response;
 
 public class SearchResultActivity extends AppCompatActivity implements BeaconConsumer {
     LinearLayout ll_bookmark, ll_bell;
-    ImageView iv_backbtn, iv_star, lv_bell;
+    ImageView iv_backbtn, iv_star, iv_bell;
     TextView tv_busnum, tv_arrivaltime, tv_arrivalbusstop, tv_curBusStop;
     static String busnumber, ars_Id, stationName, result, vehId1, nextStation, beaId, checkVehId,checkVehId2;
     String stationByUidUrl, BusStopServiceKey, seconds, minutes, current_result;
@@ -96,7 +96,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
         result = null;
         ll_bookmark = findViewById(R.id.ll_bookmark);
         ll_bell = findViewById(R.id.ll_bell);
-        lv_bell = findViewById(R.id.iv_bell);
+        iv_bell = findViewById(R.id.iv_bell);
         iv_backbtn = findViewById(R.id.iv_backbtn);
         iv_star = findViewById(R.id.iv_star);
         tv_busnum = findViewById(R.id.tv_searchbusnum);
@@ -104,8 +104,6 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
         tv_arrivalbusstop = findViewById(R.id.tv_arrivalbusstop);
         tv_curBusStop = findViewById(R.id.tv_curBusStop);
         btn_beacon = findViewById(R.id.btn_beacon);
-        btn_beacon.setEnabled(false);
-
         tv_busnum.setText(busnumber);
         tv_curBusStop.setText(stationName);
 
@@ -114,8 +112,9 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
         beaconManager.setRssiFilterImplClass(ArmaRssiFilter.class);
 
-        btn_beacon.setEnabled(true);
-
+//        // 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
+//        //        beaconManager.bind(this);
+//        beaconManager.bindInternal(this);
         // 즐겨찾기 유무 확인 후 아이콘 적용
         class SelectRunnable implements Runnable {
             @Override
@@ -146,6 +145,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                                     stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
                                             "serviceKey=" + BusStopServiceKey +
                                             "&arsId=" + ars_Id;
+
                                     StationByUidItem stationByUidItem = new StationByUidItem(stationByUidUrl, busnumber);
                                     stationByUidItem.execute();
 
@@ -153,7 +153,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                                     current_result = StationByResultMap.get("arrmsg1");
                                     vehId1 = StationByResultMap.get("vehId1");
                                     if (!vehId1.equals(checkVehId2)){
-                                        lv_bell.setImageResource(R.drawable.bell);
+                                        iv_bell.setImageResource(R.drawable.bell);
                                         checkVehId2 = vehId1;
                                     }
                                     Log.d("StationByUid 결과", "arrmsg1 : " + current_result+"   vehId: "+vehId1);
@@ -211,17 +211,19 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
         btn_beacon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (btn_beacon.getText().toString().equals("버스도착 알림받기")) {
-                    btn_beacon.setText("버스도착 알림취소");
-                    // 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
-                    beaconManager.bindInternal(SearchResultActivity.this);
-                    handler.sendEmptyMessage(0);
-                } else {
+                j = 1 - j;
+                if(j == 0) {
                     btn_beacon.setText("버스도착 알림받기");
+                    btn_beacon.setBackground(getDrawable(R.drawable.bus_arrival_alarm));
                     beaconManager.unbindInternal(SearchResultActivity.this);
                     beaconManager.stopRangingBeacons(region);
                     Log.d("비콘 종료시도", "종료시도했다");
                     handler.removeMessages(0);
+                } else {
+                    btn_beacon.setBackground(getDrawable(R.drawable.search_result_border));
+                    // 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
+                    beaconManager.bindInternal(SearchResultActivity.this);
+                    handler.sendEmptyMessage(0);
                 }
             }
         });
@@ -284,7 +286,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                                 if (beaModel.getCode().equals("200")) {
                                     Toast.makeText(SearchResultActivity.this, "알림을 보냈습니다."
                                             , Toast.LENGTH_SHORT).show();
-                                    lv_bell.setImageResource(R.drawable.bell2);//색변경
+                                    iv_bell.setImageResource(R.drawable.bell_enabled);//색변경
                                     Log.v("Code", beaModel.getCode());
                                     Log.v("Message", beaModel.getMessage());
                                     beaId = beaModel.getBeaId();
@@ -334,7 +336,10 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                 String min = String.valueOf(getMin / (60 * 1000)); // 몫
                 // 초단위
                 String second = String.valueOf((getMin % (60 * 1000)) / 1000); // 나머지
-                tv_arrivaltime.setText(min + "분 " + second + "초 후 도착 예정");
+
+                if (min.equals("0"))
+                    tv_arrivaltime.setText(second + "초 후 도착 예정");
+                else tv_arrivaltime.setText(min + "분 " + second + "초 후 도착 예정");
             }
             public void onFinish() {
             // 제한시간 종료시
@@ -388,7 +393,9 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
         });
         try {
 //            beaconManager.startMonitoringBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
+            Log.d("비콘아이디: ",beaId);
 //            region = new Region("myRangingUniqueId", Identifier.parse("74278bda-b644-4520-8f0c-720eaf059935"), null, null);
+            region = new Region("myRangingUniqueId", Identifier.parse(beaId), null, null);
 //            region = new Region("myRangingUniqueId", null, null, null);
 
             Log.d("비콘아이디: ",beaId);
@@ -399,8 +406,6 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
         } catch (RemoteException e) {
         }
     }
-
-
 
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
@@ -417,6 +422,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
             }
             handler.sendEmptyMessageDelayed(0, 500);// 자기 자신을 0.5초마다 호출
         }};
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();

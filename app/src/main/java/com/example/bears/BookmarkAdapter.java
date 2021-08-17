@@ -242,7 +242,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                 // 초단위
                 String second = String.valueOf((getMin % (60 * 1000)) / 1000); // 나머지
 
-                holder.tv_arrivaltime.setText(min + "분 " + second + "초 후 도착");
+                if (min.equals("0"))
+                    holder.tv_arrivaltime.setText(second + "초 후 도착 예정");
+                else holder.tv_arrivaltime.setText(min + "분 " + second + "초 후 도착 예정");
             }
 
             // 제한시간 종료시

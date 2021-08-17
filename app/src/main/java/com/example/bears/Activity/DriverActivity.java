@@ -31,10 +31,10 @@ public class DriverActivity extends AppCompatActivity {
     static ArrayList<DriverData> driverData;
     static DriverAdapter driverAdapter;
     LinearLayoutManager linearLayoutManager;
-    TextView tv_beaconnum;
+    TextView tv_beaconnum, tv_driverBusNum;
     private Socket mSocket;
     JSONObject data;
-    static String id;
+    static String id, busNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,7 @@ public class DriverActivity extends AppCompatActivity {
         btn_logout = findViewById(R.id.btn_logout);
         rv_driver = findViewById(R.id.rv_driver);
         tv_beaconnum = findViewById(R.id.tv_beaconnum);
+        tv_driverBusNum = findViewById(R.id.tv_driverbusnum);
         data = new JSONObject();
         driverData = new ArrayList<>();
 
@@ -52,7 +53,9 @@ public class DriverActivity extends AppCompatActivity {
         rv_driver.setAdapter(driverAdapter);
         Intent intent = getIntent();
         id = intent.getStringExtra("beaconID");
+        busNum = intent.getStringExtra("busNum");
         tv_beaconnum.setText(id);
+        tv_driverBusNum.setText(busNum);
 
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,8 +80,7 @@ public class DriverActivity extends AppCompatActivity {
             mSocket.on(Socket.EVENT_CONNECT, args -> {
                 try {
                     Gson gson = new Gson();
-                    //임시
-                    id = "bus01";
+
                     data.put("username", id);
                     data.put("roomNumber", id.substring(id.length() - 2));
                     String jsonPlace = gson.toJson(data);

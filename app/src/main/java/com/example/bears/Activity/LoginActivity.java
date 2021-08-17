@@ -62,9 +62,11 @@ public class LoginActivity extends AppCompatActivity {
                                 LoginModel loginModel = response.body();
                                 Log.v("Code", loginModel.getCode());
                                 Log.v("Message", loginModel.getMessage());
+                                Log.v("BusNum", loginModel.getBusNum());
                                 if (loginModel.getCode().equals("200")) {
                                     Intent intent = new Intent(LoginActivity.this, DriverActivity.class);
                                     intent.putExtra("beaconID",id);
+                                    intent.putExtra("busNum", loginModel.getBusNum());
                                     startActivity(intent);
                                     finish();
                                 } else if (loginModel.getCode().equals("200")){

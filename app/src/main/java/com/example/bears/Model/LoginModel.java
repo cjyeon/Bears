@@ -9,6 +9,15 @@ public class LoginModel {
     @SerializedName("message")
     private String message;
 
+    @SerializedName("busname")
+    private String busNum;
+
+    public LoginModel(String code, String message, String busNum) {
+        this.code = code;
+        this.message = message;
+        this.busNum = busNum;
+    }
+
     public String getCode() {
         return code;
     }
@@ -17,17 +26,20 @@ public class LoginModel {
         this.code = code;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
     public void setMessage(String message) {
         this.message = message;
     }
 
-    public LoginModel(String code, String message) {
-        this.code = code;
-        this.message = message;
+    public String getBusNum() {
+        return busNum;
     }
 
-    public String getMessage() {
-        return message;
+    public void setBusNum(String busNum) {
+        this.busNum = busNum;
     }
 }
 
