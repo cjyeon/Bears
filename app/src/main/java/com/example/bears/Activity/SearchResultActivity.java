@@ -3,7 +3,7 @@ package com.example.bears.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -160,7 +160,7 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                                     if (current_result.contains("[막차]")) {
                                         current_result = current_result.replaceAll("\\[막차\\] ", "");
                                     }
-                                    if (current_result.equals("[차고지출발]")) {
+                                    if (current_result.equals("[차고지출발] ")) {
                                         current_result = current_result.replaceAll("\\[", "").replaceAll("\\]", "");
                                         tv_arrivaltime.setText(current_result);
                                         tv_arrivalbusstop.setText("");
@@ -214,12 +214,13 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                 j = 1 - j;
                 if(j == 0) {
                     btn_beacon.setText("버스도착 알림받기");
-                    btn_beacon.setBackground(getDrawable(R.drawable.bus_arrival_alarm));
+                    btn_beacon.setBackground(getDrawable(R.drawable.arrival_alarm_true));
                     beaconManager.unbindInternal(SearchResultActivity.this);
                     beaconManager.stopRangingBeacons(region);
                     Log.d("비콘 종료시도", "종료시도했다");
                     handler.removeMessages(0);
                 } else {
+                    btn_beacon.setText("버스도착 알림취소");
                     btn_beacon.setBackground(getDrawable(R.drawable.search_result_border));
                     // 비콘 탐지를 시작한다. 실제로는 서비스를 시작하는것.
                     beaconManager.bindInternal(SearchResultActivity.this);
@@ -286,14 +287,15 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                                 if (beaModel.getCode().equals("200")) {
                                     Toast.makeText(SearchResultActivity.this, "알림을 보냈습니다."
                                             , Toast.LENGTH_SHORT).show();
-                                    iv_bell.setImageResource(R.drawable.bell_enabled);//색변경
+                                    iv_bell.setImageResource(R.drawable.bell_enabled);
                                     Log.v("Code", beaModel.getCode());
                                     Log.v("Message", beaModel.getMessage());
                                     beaId = beaModel.getBeaId();
                                     Log.v("beaId", beaId);
 
                                     btn_beacon.setEnabled(true);
-
+                                    btn_beacon.setTextColor(getColor(R.color.colorPrimary));
+                                    btn_beacon.setBackgroundResource(R.drawable.arrival_alarm_true);
                                 } else {
                                     Toast.makeText(SearchResultActivity.this, "알림실패"
                                             , Toast.LENGTH_SHORT).show();
