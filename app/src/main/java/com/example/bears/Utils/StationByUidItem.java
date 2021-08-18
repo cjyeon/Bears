@@ -33,6 +33,7 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
         String arrmsg2 = null;
         String vehId1 = null;
         String nxtStn = null;
+        String stNm = null;
 
         DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = null;
@@ -68,11 +69,13 @@ public class StationByUidItem extends AsyncTask<Void, Void, HashMap<String, Stri
                     arrmsg1 = getTagValue("arrmsg1", eElement);
                     arrmsg2 = getTagValue("arrmsg2", eElement);
                     nxtStn = getTagValue("nxtStn", eElement);
+                    stNm = getTagValue("stNm", eElement);
                     resultMap.put("rtNm", rtNm);
                     resultMap.put("arrmsg1", arrmsg1);
                     resultMap.put("arrmsg2", arrmsg2);
                     resultMap.put("vehId1", vehId1);
                     resultMap.put("nxtStn", nxtStn);
+                    resultMap.put("stNm", stNm);
                     return resultMap;
                 }
             }

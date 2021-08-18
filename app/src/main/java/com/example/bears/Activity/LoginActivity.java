@@ -62,7 +62,6 @@ public class LoginActivity extends AppCompatActivity {
                                 LoginModel loginModel = response.body();
                                 Log.v("Code", loginModel.getCode());
                                 Log.v("Message", loginModel.getMessage());
-                                Log.v("BusNum", loginModel.getBusNum());
                                 if (loginModel.getCode().equals("200")) {
                                     Intent intent = new Intent(LoginActivity.this, DriverActivity.class);
                                     intent.putExtra("beaconID",id);
@@ -87,6 +86,8 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Call<LoginModel> call, Throwable t) {
                             Log.d("ssss", t.getMessage());
+                            Toast.makeText(LoginActivity.this, "서비스 점검중입니다."
+                                    , Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

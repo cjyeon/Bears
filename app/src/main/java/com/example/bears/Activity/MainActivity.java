@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
                             current_result = StationByResultMap.get("arrmsg1");
                             vehId1 = StationByResultMap.get("vehId1");
                             nextStation = StationByResultMap.get("nxtStn");
+                            stationName = StationByResultMap.get("stNm");
 
                             Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
                             intent.putExtra("busnumber", busnumber);

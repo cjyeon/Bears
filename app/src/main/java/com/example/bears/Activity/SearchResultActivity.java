@@ -154,6 +154,9 @@ public class SearchResultActivity extends AppCompatActivity implements BeaconCon
                                     vehId1 = StationByResultMap.get("vehId1");
                                     if (!vehId1.equals(checkVehId2)){
                                         iv_bell.setImageResource(R.drawable.bell);
+                                        btn_beacon.setEnabled(false);
+                                        btn_beacon.setTextColor(getColor(R.color.colorgrey));
+                                        btn_beacon.setBackgroundResource(R.drawable.arrival_alarm_false);
                                         checkVehId2 = vehId1;
                                     }
                                     Log.d("StationByUid 결과", "arrmsg1 : " + current_result+"   vehId: "+vehId1);

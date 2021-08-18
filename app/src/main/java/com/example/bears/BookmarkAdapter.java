@@ -34,8 +34,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
     ArrayList<String> arr_arrmsg1 = new ArrayList<>();
     CountDownTimer countDownTimer;
 
-    public static Thread t, tt;
-
     public BookmarkAdapter(Context context) {
         this.context = context;
     }
@@ -160,11 +158,11 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
         }
 
         SelectRunnable selectRunnable = new SelectRunnable();
-        t = new Thread(selectRunnable);
+        Thread t = new Thread(selectRunnable);
         t.start();
 
         Timechange timechange = new Timechange();
-        tt = new Thread(timechange);
+        Thread tt = new Thread(timechange);
         tt.start();
     }
 

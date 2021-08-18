@@ -178,7 +178,8 @@
             android:hint="정류장 번호를 입력하세요"
             android:textSize="16dp"
             style="@style/generalText"
-            android:imeOptions="actionDone"/>
+            android:imeOptions="actionDone"
+            android:inputType="number"/>
 
     </LinearLayout>
 
