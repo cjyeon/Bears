@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bears.BookmarkAdapter;
+import com.example.bears.Adapter.BookmarkAdapter;
 import com.example.bears.R;
 import com.example.bears.Room.BookmarkDB;
 import com.example.bears.Room.BookmarkEntity;
@@ -44,7 +44,7 @@ public class BookmarkActivity extends AppCompatActivity {
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         rv_bookmark.setLayoutManager(layoutManager);
-        bookmarkAdapter = new BookmarkAdapter(this);
+        bookmarkAdapter = new BookmarkAdapter(this, bookmarkDB);
         rv_bookmark.setAdapter(bookmarkAdapter);
 
         //UI 갱신 (라이브데이터 Observer 이용, 해당 디비값이 변화가생기면 실행됨)

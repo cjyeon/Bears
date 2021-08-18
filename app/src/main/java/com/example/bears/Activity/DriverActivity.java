@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bears.DriverAdapter;
+import com.example.bears.Adapter.DriverAdapter;
 import com.example.bears.DriverData;
 import com.example.bears.R;
 import com.google.gson.Gson;

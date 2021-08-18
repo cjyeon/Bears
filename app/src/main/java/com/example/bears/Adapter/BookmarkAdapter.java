@@ -1,4 +1,4 @@
-package com.example.bears;
+package com.example.bears.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bears.Activity.SearchResultActivity;
+import com.example.bears.R;
 import com.example.bears.Room.BookmarkDB;
 import com.example.bears.Room.BookmarkEntity;
 import com.example.bears.Utils.StationByUidItem;
@@ -30,12 +31,14 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
     String stationByUidUrl, BusStopServiceKey, busNum, stationId, stationName, nextStation, current_result, vehId1, seconds, minutes;
     public HashMap<String, String> StationByResultMap;
     String[] array;
+    BookmarkDB bookmarkDB;
     ArrayList<String> arr_vehId1 = new ArrayList<>();
     ArrayList<String> arr_arrmsg1 = new ArrayList<>();
     CountDownTimer countDownTimer;
 
-    public BookmarkAdapter(Context context) {
+    public BookmarkAdapter(Context context, BookmarkDB bookmarkDB) {
         this.context = context;
+        this.bookmarkDB = bookmarkDB;
     }
 
     @Override
@@ -75,6 +78,8 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                                     stationName = bookmarkEntities.get(position).getStationName();
                                     stationId = bookmarkEntities.get(position).getStationId();
                                     busNum = bookmarkEntities.get(position).getBusNum();
+
+                                    Log.d("타임체인지 실행 : ", busNum);
 
                                     stationByUidUrl = "http://ws.bus.go.kr/api/rest/stationinfo/getStationByUid?" +
                                             "serviceKey=" + BusStopServiceKey +
@@ -116,9 +121,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                                         else
                                             seconds = "0";
 
-                                        if (countDownTimer != null) {
-                                            countDownTimer.cancel();
-                                        }
+//                                        if (countDownTimer != null) {
+//                                            countDownTimer.cancel();
+//                                        }
                                         countDown(minutes, seconds, holder);
                                         holder.tv_arrivalbusstop.setText(array[1].substring(0, array[1].length() - 1));
                                     }
@@ -129,7 +134,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
                                 }
                             }
                         });
-
                         Thread.sleep(10000);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();

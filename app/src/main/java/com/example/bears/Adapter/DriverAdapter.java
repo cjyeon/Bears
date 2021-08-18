@@ -1,6 +1,5 @@
-package com.example.bears;
+package com.example.bears.Adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +7,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.bears.DriverData;
+import com.example.bears.R;
 
 import java.util.ArrayList;
 
