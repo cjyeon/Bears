@@ -69,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                                     intent.putExtra("busNum", loginModel.getBusNum());
                                     startActivity(intent);
                                     finish();
-                                } else if (loginModel.getCode().equals("200")){
+                                } else if (loginModel.getCode().equals("204")){
                                     Toast.makeText(LoginActivity.this, "아이디와 비밀번호를 확인해주세요"
                                             , Toast.LENGTH_SHORT).show();
                                     Log.d("ssss", response.message());
